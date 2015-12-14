@@ -2,6 +2,7 @@
 
 This example will show you how you can automatically log changes to your site into New Relic's [Deploy Log](https://docs.newrelic.com/docs/apm/applications-menu/events/deployments-page) when the workflow fires on Pantheon.
 
+This script uses a couple clever tricks to get data about the platform. First of all it uses the `pantheon_curl()` command to fetch the extended metadata information for the site/environment, which includes the New Relic API key. It also uses data within the git repository on the platform to pull out deploy tag numbers and log messages. 
 
 ## Instructions ##
 
@@ -9,8 +10,10 @@ Setting up this example is easy:
 
 1. Enable New Relic for your site.
 2. Add the example `new_relic_deploy.php` script to the `private` directory of your code repository.
-2. Add a Quicksilver operation to your `pantheon.yml` to fire the script a deploy.
-3. Test a deploy out!
+3. Add a Quicksilver operation to your `pantheon.yml` to fire the script a deploy.
+4. Test a deploy out!
+
+Opeionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
 ### Example `pantheon.yml` ###
 
