@@ -1,8 +1,9 @@
-= New Relic Deploy Logs =
+# New Relic Deploy Logs #
 
 This example will show you how you can automatically log changes to your site into New Relic's [Deploy Log](https://docs.newrelic.com/docs/apm/applications-menu/events/deployments-page) when the workflow fires on Pantheon.
 
-== Instructions ==
+
+## Instructions ##
 
 Setting up this example is easy:
 
@@ -11,7 +12,7 @@ Setting up this example is easy:
 2. Add a Quicksilver operation to your `pantheon.yml` to fire the script a deploy.
 3. Test a deploy out!
 
-=== Example `pantheon.yml` ===
+### Example `pantheon.yml` ###
 
 Here's an example of what your `pantheon.yml` would look like if this were the only Quicksilver operation you wanted to use:
 
