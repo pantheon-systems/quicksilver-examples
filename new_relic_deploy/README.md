@@ -13,7 +13,7 @@ Setting up this example is easy:
 3. Add a Quicksilver operation to your `pantheon.yml` to fire the script a deploy.
 4. Test a deploy out!
 
-Oteionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
+Opteionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
 ### Example `pantheon.yml` ###
 
