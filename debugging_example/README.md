@@ -55,4 +55,4 @@ Array
 ========== END PAYLOAD ============
 ```
 
-The `wf_type`, `wf_description` and `user_email` values are liekly to be of particular interest. You can get additional information from the `$_SERVER` and `$_ENV` superglobals. You can also interrogate the status of the git repository, as well as bootstrapping the CMS. There are lots of possibilities! Have fun with Quicksilver!
+The `wf_type`, `wf_description` and `user_email` values are likely to be of particular interest. You can get additional information from the `$_SERVER` and `$_ENV` superglobals. You can also interrogate the status of the git repository, as well as bootstrapping the CMS. There are lots of possibilities! Have fun with Quicksilver!
