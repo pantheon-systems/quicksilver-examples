@@ -41,3 +41,29 @@ Quicksilver scripts should be tracked in the `private` directory of your project
 
 If your scripts use sensitive data like API keys, you may not want to put these keys under version control. You may make use of the private area of the `files` directory to store per-environment keyfiles. The Slack notification example uses this pattern. For high-security keys, we recommend a third party secrets lockbox like [Lockr](https://lockr.io).
 
+## Terminus Commands ##
+
+Developers making use of Quicksilver will want to make sure they are Terminus savvy. Get the latest release, and a few new commands are included:
+
+```shell
+$ terminus help workflows
+##NAME
+    terminus workflows
+
+##DESCRIPTION
+    Actions to be taken on an individual site
+
+##SYNOPSIS
+    <command>
+
+##SUBCOMMANDS
+    list
+        List Worflows for a Site
+    show
+        Show operation details for a workflow
+    watch
+        Streams new and finished workflows to the console
+```
+
+The `list` and `show` commands will allow you to explore previous workflows and their Quicksilver operations. The `watch` command is a developers best-friend: it will set up Terminus to automatically "follow" the workflow activity of your site, dumping back any Quicksilver output along with them.
+
