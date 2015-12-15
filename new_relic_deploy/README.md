@@ -25,6 +25,7 @@ api_version: 1
 workflows:
   deploy:
     after:
-      webphp:
-        - new_relic: private/scripts/new_relic_deploy.php
+        - type: webphp
+          description: Log to New Relic
+          script: private/scripts/new_relic_deploy.php
 ```
