@@ -12,8 +12,8 @@ Setting up this example is easy:
 ```shell
   $> echo '{"slack_url": "https://hooks.slack.com/services/MY/SECRET/URL"}' > secrets.json
   # Note, you'll need to copy the secrets into each environment where you want to trigger Slack notifications.
-  $> `terminus site connection-info --env=live --site=your-site --field=sftp_command`
-      Connected to appserver.live.d1ef01f8-364c-4b91-a8e4-f2a46f14237e.drush.in.
+  $> `terminus site connection-info --env=dev --site=your-site --field=sftp_command`
+      Connected to appserver.dev.d1ef01f8-364c-4b91-a8e4-f2a46f14237e.drush.in.
   sftp> cd files
   sftp> mkdir private
   sftp> cd private
