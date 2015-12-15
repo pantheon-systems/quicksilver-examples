@@ -25,6 +25,6 @@ workflows:
     after:
       - type: webphp
         description: Sanitize the db
-        script: private/scripts/after_clone_database_wordpress.php
+        script: private/scripts/db_sanitization_wordpress.php
 ```
 
