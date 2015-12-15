@@ -35,7 +35,8 @@ api_version: 1
 workflows:
   deploy:
     after:
-      webphp:
-        - new_relic: private/scripts/slack_notification.php
+        - type: webphp
+          description: Post to Slack
+          script: private/scripts/slack_notification.php
 ```
 
