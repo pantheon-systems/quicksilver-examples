@@ -10,10 +10,10 @@ Setting up this example is easy:
 
 1. [Enable New Relic](https://pantheon.io/docs/articles/sites/newrelic/) for your site.
 2. Add the example `new_relic_deploy.php` script to the `private` directory of your code repository.
-3. Add a Quicksilver operation to your `pantheon.yml` to fire the script a deploy.
+3. Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
 4. Test a deploy out!
 
-Opteionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
+Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
 ### Example `pantheon.yml` ###
 
