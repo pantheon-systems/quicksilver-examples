@@ -31,7 +31,7 @@ whenever the database is cloned in the test environment.
 - Add a Quicksilver operation to your `pantheon.yml` to fire the script a deploy.
 - Test a deploy out!
 
-Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback. You may also want to customize your notifications further. The [Slack API](https://api.slack.com/incoming-webhooks) documentation has more on your options.
+Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback. You may also want to customize your notifications further. The [Circle CI REST API](https://circleci.com/docs/api) documentation has more on your options.
 
 ### Example `pantheon.yml` ###
 
