@@ -41,7 +41,7 @@ Here's an example of what your `pantheon.yml` would look like if this were the o
 api_version: 1
 
 workflows:
-  deploy:
+  clone_database:
     after:
         - type: webphp
           description: Retry a Circle CI build
