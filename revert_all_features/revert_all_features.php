@@ -13,7 +13,6 @@ require __DIR__ . "/drush/includes/command.inc";
 if(defined("CORE_COMPATIBILITY")){
   //If the features module is enabled
   if(\Drupal::moduleHandler()->moduleExists('features')){
-
     drush_invoke("features-revert-all");
   }
 }
