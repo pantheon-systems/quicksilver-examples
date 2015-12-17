@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Greg
- * Date: 12/17/2015
- * Time: 1:41 PM
- */
 
 require __DIR__ . "/code/includes/module.inc";
 require __DIR__ . "/drush/includes/command.inc";
