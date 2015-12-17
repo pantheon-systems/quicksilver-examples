@@ -1,7 +1,8 @@
 <?php
-// Find out what tag we are on and get the annotation.
-$deploy_tag = `git describe --tags`;
-$annotation = `git tag -l -n99 $deploy_tag`;
+// Get the committer, hash, and message for the most recent commit.
+$committer = `git log -1 --pretty=%cn`;
+$message = `git log -1 --pretty=%B`;
+$hash = `git log -1 --pretty=%h`;
 // Load our hidden credentials.
 // See the README.md for instructions on storing secrets.
 $secrets = json_decode(file_get_contents($_SERVER['HOME'] . '/files/private/secrets.json'), 1);
@@ -9,18 +10,18 @@ if ($secrets == FALSE) {
   die('No secrets file found. Aborting!');
 }
 
+isset ($secrets['slack_channel']) ? $channel = $secrets['slack_channel'] : $channel = '#quicksilver';
+
 // Prepare the slack payload as per:
 // https://api.slack.com/incoming-webhooks
 // TODO: use awesome attachment-style formatting.
 // https://api.slack.com/docs/attachments
-$text = 'Deploy to the '. $_ENV['PANTHEON_ENVIRONMENT'];
-$text .= '  of '. $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
-$text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
-$text .= "\n\n*DEPLOY MESSAGE*: $annotation";
+$text = 'Code sync to the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . ' by ' . $_POST['user_email'] . "!\n";
+$text .= 'Most recent commit: ' . rtrim($hash) . ' by ' . rtrim($committer) . ': ' . $message;
 $post = array(
   'username' => 'Pantheon-Quicksilver',
   'text' => $text,
-  'channel' => '#quicksilver',
+  'channel' => $channel,
   'icon_emoji' => ':lightning_cloud:'
 );
 $payload = json_encode($post);
