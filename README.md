@@ -37,7 +37,7 @@ Note that if you want to hook onto deploy workflows, you'll need to deploy your 
 
 ## Security ##
 
-Quicksilver scripts should be tracked in the `private` directory of your project repository, which is not accessible to the public internat. Scripts there can only be executed by the Pantheon platform. We recommend setting up a dedicated directory (e.g. `private/scripts` or `private/quicksilver`) for tracking these files.
+Quicksilver scripts should be tracked in the `private` directory of your project repository, which is not accessible to the public Internet. Scripts there can only be executed by the Pantheon platform. We recommend setting up a dedicated directory (e.g. `private/scripts` or `private/quicksilver`) for tracking these files.
 
 If your scripts use sensitive data like API keys, you may not want to put these keys under version control. You may make use of the private area of the `files` directory to store per-environment keyfiles. The Slack notification example uses this pattern. For high-security keys, we recommend a third party secrets lockbox like [Lockr](https://lockr.io).
 
