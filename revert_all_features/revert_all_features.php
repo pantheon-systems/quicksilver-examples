@@ -17,7 +17,7 @@ if (module_exists("features")){
   //Get list of all features -- reset the cache so we see new/updated features
   $modules = features_get_features(NULL, TRUE);
 
-  //Borrowed and modified from features.drush
+  //Borrowed and modified from features.drush.inc
   //For every module:
   //    look through its components, find those that are overridden/need review/rebuildable
   //    add them to an array of components that will be reverted
