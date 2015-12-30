@@ -22,7 +22,7 @@ api_version: 1
 
 workflows:
   deploy:
-    before:
+    after:
       - type: webphp
         description: Revert All Features
         script: private/scripts/revert_all_features.php
