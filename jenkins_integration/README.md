@@ -9,10 +9,10 @@ Setting up this example is easy:
 - Configure a Jenkins Job with a token at https://YOUR_JENKINS_SERVER_NAME/job/JOB_NAME/configure . Found under "Build Triggers" tab, check the "Trigger Builds remotely" checkbox and enter a TOKEN_VALUE.
 
 - Copy the following information into a secrets.json file:
-	- JENKINS_WEBHOOK_URL (https://YOUR_JENKINS_SERVER_NAME/job/JOB_NAME/build)
-	- TOKEN_VALUE (Setup above)
-	- USERNAME (Your Jenkins Username)
-	- API_TOKEN (Found at https://YOUR_JENKINS_SERVER_NAME/YOUR_USERNAME/configure under API Token)
+	- jenkins_url: JENKINS_WEBHOOK_URL (https://YOUR_JENKINS_SERVER_NAME/job/JOB_NAME/build)
+	- token: TOKEN_VALUE (Setup above)
+	- username: USERNAME (Your Jenkins Username)
+	- api_token: API_TOKEN (Found at https://YOUR_JENKINS_SERVER_NAME/YOUR_USERNAME/configure under API Token)
 
 ```shell
   $> echo '{"jenkins_url": "JENKINS_WEBHOOK_URL","token": "TOKEN_VALUE","username": "USERNAME","api_token": "API_TOKEN"}' > secrets.json
