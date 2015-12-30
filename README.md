@@ -58,7 +58,7 @@ $ terminus help workflows
 
 ##SUBCOMMANDS
     list
-        List Worflows for a Site
+        List workflows for a site
     show
         Show operation details for a workflow
     watch
