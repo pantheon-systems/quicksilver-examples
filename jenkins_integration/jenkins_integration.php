@@ -1,7 +1,7 @@
 <?php
 
 //Create curl post request to hit the Jenkins webhook
-$secrets = json_decode(file_get_contents('./secrets.json'));
+$secrets = json_decode(file_get_contents($_SERVER['HOME'] . '/files/private/secrets.json'));
 
 $curl = curl_init($secrets->jenkins_url);
 
