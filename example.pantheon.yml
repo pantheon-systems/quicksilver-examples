@@ -2,13 +2,15 @@
 api_version: 1
 
 workflows:
-  # Notify team of new commit to master
+  
+  # Commits: Notify team of new commit to master (dev)
   sync_code:
     after:
       - type: webphp # we are told there will be more
         description: post to slack after each code pushed
         script: private/scripts/slack_after_code_push.php
-  # Notify, sanitize,and notify on db clone
+
+  # Database Clones: Notify, sanitize, and notify on db clone
   clone_database:
     before:
       - type: webphp
@@ -21,8 +23,9 @@ workflows:
       - type: webphp
         description: post to slack after the database clones
         script: private/scripts/slack_after_db_clone.php
+  
+  # Code Deploys: Notify, Sanitize (if on test), post to new relic, update db, and notify completion
   deploy:
-  # Alert, Sanitize (if on test), post to new relic, update db, and post completion
     before:
       - type: webphp
         description: post to slack before cloning the database
@@ -40,8 +43,9 @@ workflows:
       - type: webphp
         description: post to slack after each deploy
         script: private/scripts/slack_after_deploy.php
+
+  # Cache Clears: Post to slack after clearing cache
   clear_cache:
-  # Post to slack
     after:
       - type: webphp
         description: post to slack after cache clear
