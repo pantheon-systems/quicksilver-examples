@@ -40,7 +40,7 @@ workflows:
       - type: webphp
         description: post to slack after each deploy
         script: private/scripts/slack_after_deploy.php
-    clear_cache:
+  clear_cache:
   # Post to slack
     after:
       - type: webphp
