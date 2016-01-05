@@ -1,0 +1,52 @@
+---
+api_version: 1
+
+workflows:
+  
+  # Commits: Notify team of new commit to master (dev)
+  sync_code:
+    after:
+      - type: webphp
+        description: post to slack after each code pushed
+        script: private/scripts/slack_after_code_push.php
+
+  # Database Clones: Notify, sanitize, and notify on db clone
+  clone_database:
+    before:
+      - type: webphp
+        description: post to slack before cloning the database
+        script: private/scripts/slack_before_db_clone.php
+    after:
+      - type: webphp
+        description: sanitize the db after each database Clone
+        script: private/scripts/sanitize_after_db_clone.php
+      - type: webphp
+        description: post to slack after the database clones
+        script: private/scripts/slack_after_db_clone.php
+  
+  # Code Deploys: Notify, Sanitize (if on test), post to new relic, update db, and notify completion
+  deploy:
+    before:
+      - type: webphp
+        description: post to slack before cloning the database
+        script: private/scripts/slack_before_deploy.php
+    after:
+      - type: webphp
+        description: post to new relic always
+        script: private/scripts/post_new_relic.php
+      - type: webphp
+        description: sanitize the db after deploy to test
+        script: private/scripts/sanitize_after_db_clone.php
+      - type: webphp
+        description: pull configuration into the database
+        script: private/scripts/config_pull_after_deploy.php
+      - type: webphp
+        description: post to slack after each deploy
+        script: private/scripts/slack_after_deploy.php
+
+  # Cache Clears: Post to slack after clearing cache
+  clear_cache:
+    after:
+      - type: webphp
+        description: post to slack after cache clear
+        script: private/scripts/slack_after_clear_cache.php
