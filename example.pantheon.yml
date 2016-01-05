@@ -6,7 +6,7 @@ workflows:
   # Commits: Notify team of new commit to master (dev)
   sync_code:
     after:
-      - type: webphp # we are told there will be more
+      - type: webphp
         description: post to slack after each code pushed
         script: private/scripts/slack_after_code_push.php
 
