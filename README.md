@@ -1,14 +1,14 @@
 # Quicksilver Examples
 Example Quicksilver scripts for Power Users of Pantheon. These will allow you to automate more of your workflow, and integrate better with other cloud services.
 
-The current release of Quicksilver supports one utility operation: `webphp`. This invokes a PHP script via tha same runtime environment as the website itself. 
+The current release of Quicksilver supports one utility operation: `webphp`. This invokes a PHP script via tha same runtime environment as the website itself. `php` scripts are subject to the same limits as any code on the platform, [like timeouts](https://pantheon.io/docs/articles/sites/timeouts/#timeouts-that-aren't-configurable), and cannot be batched. 
 
 This initial release makes four platform workflows eligible for Quicksilver operations:
 
-- `deploy`: when code is deployed to Test or Live.
-- `sync_code`: code is pushed via Git or committed in the Pantheon dashboard.
-- `clone_database`: data is cloned between environments.
-- `clear_cache`: the most popular workflow of them all!
+- `deploy`: when code is deployed to Test or Live. `webphp` scripts run on the target environment.
+- `sync_code`: code is pushed via Git or committed in the Pantheon dashboard. `webphp` scripts run on the committed-to environment (dev or multidev).
+- `clone_database`: data is cloned between environments. `webphp` scripts run on the target (to_env) environment.
+- `clear_cache`: the most popular workflow of them all! `webphp` scripts run on the cleared environment.
 
 ## Introducing `pantheon.yml` ##
 
