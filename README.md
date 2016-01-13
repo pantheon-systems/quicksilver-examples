@@ -1,7 +1,7 @@
 # Quicksilver Examples
 Example Quicksilver scripts for Power Users of Pantheon. These will allow you to automate more of your workflow, and integrate better with other cloud services.
 
-The current release of Quicksilver supports one utility operation: `webphp`. This invokes a PHP script via tha same runtime environment as the website itself. `php` scripts are subject to the same limits as any code on the platform, [like timeouts](https://pantheon.io/docs/articles/sites/timeouts/#timeouts-that-aren't-configurable), and cannot be batched. 
+The current release of Quicksilver supports one utility operation: `webphp`. This invokes a PHP script via the same runtime environment as the website itself. `php` scripts are subject to the same limits as any code on the platform, [like timeouts](https://pantheon.io/docs/articles/sites/timeouts/#timeouts-that-aren't-configurable), and cannot be batched. 
 
 This initial release makes four platform workflows eligible for Quicksilver operations:
 
@@ -65,5 +65,5 @@ $ terminus help workflows
         Streams new and finished workflows to the console
 ```
 
-The `list` and `show` commands will allow you to explore previous workflows and their Quicksilver operations. The `watch` command is a developers best-friend: it will set up Terminus to automatically "follow" the workflow activity of your site, dumping back any Quicksilver output along with them.
+The `list` and `show` commands will allow you to explore previous workflows and their Quicksilver operations. The `watch` command is a developers best friend: it will set up Terminus to automatically "follow" the workflow activity of your site, dumping back any Quicksilver output along with them.
 
