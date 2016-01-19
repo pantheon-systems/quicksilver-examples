@@ -1,10 +1,10 @@
-# Quicksilver Debugging #
+# Quicksilver Environment Inspector #
 
-This example is intended for users who want to explore the potential for Quicksilver with a quick debugging example. 
+This example is intended for users who want to explore the potential for Quicksilver with a quick environment export example. The contents of $_POST and all of the environment variables are displayed in the Quicksilver workflow log.
 
 Setting up this example is easy:
 
-1. Add the example `debug.php` script to the `private` directory of your code repository.
+1. Add the example `inspect.php` script to the `private` directory of your code repository.
 2. Add a Quicksilver operation to your `pantheon.yml` to fire the script after cache clears.
 3. Fire up terminus to watch the workflow log.
 4. Push everything to Pantheon.
@@ -21,8 +21,8 @@ workflows:
   clear_cache:
     after:
       - type: webphp
-        description: Dump debugging output
-        script: private/scripts/debug.php
+        description: Inspect quicksilver environment
+        script: private/scripts/inspect.php
 ```
 
 ### Example `terminus workflows watch` Output ###
