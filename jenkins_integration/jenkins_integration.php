@@ -16,5 +16,12 @@ curl_setopt($curl, CURLOPT_POSTFIELDS, array(
   'token' => $secrets->token,
 ));
 
-//Execute the request (could store response if necessary)
-curl_exec($curl);
+//Execute the request 
+$response = curl_exec($curl);
+
+if($response){
+	echo "Build Successful";
+}
+else{
+	echo "Build Failed";
+}
