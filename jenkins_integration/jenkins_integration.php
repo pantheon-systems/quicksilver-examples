@@ -1,5 +1,6 @@
 <?php
-
+//For logging in terminus
+header('Content-Type: text/plain; charset=UTF-8');
 //Create curl post request to hit the Jenkins webhook
 $secrets = json_decode(file_get_contents($_SERVER['HOME'] . '/files/private/secrets.json'));
 
