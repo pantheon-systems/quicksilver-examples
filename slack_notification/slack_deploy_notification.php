@@ -28,7 +28,7 @@ $fields = array(
   ),
   array( // Render Environment name with link to site, <http://{ENV}-{SITENAME}.pantheon.io|{ENV}>
     'title' => 'Environment',
-    'value' => '<http://' . $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $_ENV['PANTHEON_SITE_NAME'] . 'pantheon.io|' . $_ENV['PANTHEON_ENVIRONMENT'] . '>',
+    'value' => '<http://' . $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $_ENV['PANTHEON_SITE_NAME'] . '.pantheon.io|' . $_ENV['PANTHEON_ENVIRONMENT'] . '>',
     'short' => 'true'
   ),
   array( // Render Name with link to Email from Commit message
