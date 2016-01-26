@@ -1,0 +1,66 @@
+<?php
+/**
+ * @file
+ * Provides a hook for Pantheon workflow.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function quicksilver_permission() {
+  return array(
+    'administer quicksilver' => array(
+      'title' => t('Administer Quicksilver'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu
+ */
+function quicksilver_menu() {
+  $items = array();
+  $items['admin/config/services/quicksilver'] = array(
+    'title' => 'Pantheon Quicksilver',
+    'description' => 'Configure API key and test mode for the Pantheon quicksilver module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('quicksilver_admin_form'),
+    'access arguments' => array('administer quicksilver'),
+    'file' => 'quicksilver.admin.inc',
+  );
+  $items['quicksilver/%'] = array(
+    'page callback' => 'quicksilver_webhook_handler',
+    'access callback' => TRUE,
+    'delivery callback' => 'drupal_json_output'
+  );
+  return $items;
+}
+
+/**
+ * quicksilver webhook callback.
+ */
+function quicksilver_webhook_handler() {
+  $success = FALSE;
+  $message = '';
+  $submitted_key = arg(1);
+  $api_key = variable_get('quicksilver_api_key', '');
+
+  if (isset($submitted_key) && $submitted_key == $api_key) {
+    $success = TRUE;
+    $data = array(
+      'payload' => $_POST['payload'],
+      'env' => $_POST['env']
+    );
+    module_invoke_all('quicksilver', $data);
+  }
+
+  if (variable_get('quicksilver_test_mode', TRUE)) {
+    $str = $success ? t('Success') : t('Failed');
+    if (isset($_POST['payload']['wf_type'])) {
+      $str .= ' ' . $_POST['payload']['wf_type'];
+    }
+    watchdog('quicksilver', $str . ' - API Key: <pre>' . $api_key . '</pre> Submitted Key: <pre>' . $submitted_key . '</pre><pre> Hook Data: ' . print_r($data, TRUE) . '</pre>');
+  }
+
+  drupal_json_output(array('success' => $success, 'message' => $message));
+}

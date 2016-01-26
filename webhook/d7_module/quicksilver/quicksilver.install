@@ -1,0 +1,20 @@
+<?php
+/**
+ * @file
+ * Install file for the Pantheon quicksilver module.
+ */
+
+/**
+ * Implements hook_install();
+ */
+function quicksilver_install() {
+  require_once drupal_get_path('module', 'quicksilver') . '/quicksilver.admin.inc';
+  quicksilver_admin_generate_key();
+}
+
+/**
+ * Implements hook_uninstall();
+ */
+function quicksilver_uninstall() {
+  variable_del('quicksilver_api_key');
+}

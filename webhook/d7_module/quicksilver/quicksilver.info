@@ -1,0 +1,7 @@
+name = "Pantheon Quicksilver"
+description = "Provides a webhook receiver for Pantheon workflow data."
+package = "Pantheon"
+version = "7.x-1.0"
+core = 7.x
+project = "quicksilver"
+configure = "admin/config/services/quicksilver"
