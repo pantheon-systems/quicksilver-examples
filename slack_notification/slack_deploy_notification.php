@@ -17,9 +17,6 @@ $defaults = array(
 // See the README.md for instructions on storing secrets.
 $secrets = pantheon_quicksilver_get_secrets(array('slack_url'), $defaults);
 
-$channel = $secrets['slack_channel'];
-$username = $secrets['slack_username'];
-
 // Prepare the slack payload as per:
 // https://api.slack.com/incoming-webhooks
 $text = 'Deploy to the '. $_ENV['PANTHEON_ENVIRONMENT'];
