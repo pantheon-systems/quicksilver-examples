@@ -1,19 +1,22 @@
 # Webhook #
 
-This example demonstrates how to forward workflow events to an external url.
+This example demonstrates how to POST workflow data to an external url.
 
-`api_token` in `webhook.json` is an optional configuration. This value will be sent as a `X-Auth-Key` header to the url.
+It also contains a Drupal module which can be setup to receive and forward the workflow data through Drupal hooks. i.e. `hook_quicksilver($data)`
 
 ## Instructions ##
 
 Setting up this example is easy:
 
-- Copy `webhook.json` to the private files area of your site after adding the webhook url and optional api key.
-- Add the example `webhook.php` script to the `private/scripts` directory of your code repository.
+- Copy `webhook.json` to `files/private/webhook.json` after adding the webhook url and optional api key.
+  - The token `:api_key` may be used in the url. It will be replaced with the value of the `api_key` property when data is sent.
+- Add the example `webhook.php` script to the `private/scripts/webhook.php` directory of your code repository.
 - Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
 - Clear cache, sync code, clone a db, or deploy and take a look at your webhook handler for events!
 
-Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
+If using the accompanying Drupal module, you may retrieve the api key from the configuration page after installation.
+
+You may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
 ### Example `pantheon.yml` ###
 
@@ -43,4 +46,48 @@ workflows:
       - type: webphp
         description: Webhook
         script: private/scripts/webhook.php
+```
+
+### Example POST data sent to the webhook url ###
+
+This is the data sent as a POST request to the `url` defined in `webhook.json`.
+
+This is also the same `$data` passed to `hook_quicksilver($data)` in the drupal module.
+
+```
+Array
+(
+    [payload] => Array
+        (
+            [wf_type] => sync_code
+            [user_id] => af9d4c14-9fd2-4053-aee2-7daf88fb73b5
+            [user_firstname] => Mike
+            [user_lastname] => Milano
+            [user_fullname] => Mike Milano
+            [site_id] => 0f97107a-e292-431b-aa3e-46f2301f5f82
+            [user_role] => owner
+            [trace_id] => 1089ead4-c3e2-11e3-a7f5-bc764e10b0cb
+            [environment] => dev
+            [wf_description] => Sync code on "dev"
+            [user_email] => user@example.com
+        )
+    [env] => Array
+        (
+            [FRAMEWORK] => drupal
+            [DOCROOT] => /
+            [FILEMOUNT] => sites/default/files
+            [DRUPAL_HASH_SALT] => SC0Db2eILOEYG8+SQEjhqEBQP2vqFe/9fO1E2UVnprA=
+            [DB_HOST] => 10.0.0.0
+            [DB_PORT] => 19949
+            [DB_USER] => pantheon
+            [DB_PASSWORD] => 3efee03a914a435ba5b0cb1f4583c7bd
+            [DB_NAME] => pantheon
+            [PANTHEON_SITE] => 0e97107b-e291-431e-aa3a-46f2301f5f82
+            [PANTHEON_SITE_NAME] => quicksilver-examples
+            [PANTHEON_ENVIRONMENT] => dev
+            [PANTHEON_INFRASTRUCTURE_ENVIRONMENT] => live
+            [PATH] => /srv/bindings/2b41c95262a642cfb4914232e3de055d/bin:/usr/local/bin:/bin:/usr/bin:/srv/bin
+        )
+
+)
 ```
