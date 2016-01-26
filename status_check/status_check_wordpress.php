@@ -33,5 +33,5 @@ if ($failed > 0) {
   $subject = 'Failed status check (' . $failed . ')';
   $message = "Below is a list of each tested url and its status:\n\n";
   $message .= $output;
-  wp_mail( $email, $subject, $message);
+  wp_mail($config['email'], $subject, $message);
 }

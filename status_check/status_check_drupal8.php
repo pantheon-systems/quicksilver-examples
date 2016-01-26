@@ -34,5 +34,5 @@ if ($failed > 0) {
   $subject = 'Failed status check (' . $failed . ')';
   $message = "Below is a list of each tested url and its status:\n\n";
   $message .= $output;
-  mail($email, $subject, $message);
+  mail($config['email'], $subject, $message);
 }
