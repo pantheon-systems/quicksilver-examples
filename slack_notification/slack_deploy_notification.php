@@ -1,15 +1,21 @@
 <?php
+
+require __DIR__ . '/slack_lib.inc';
+
 // Find out what tag we are on and get the annotation.
 $deploy_tag = `git describe --tags`;
 $annotation = `git tag -l -n99 $deploy_tag`;
+
+// Default values for parameters
+$defaults = array(
+  'slack_channel' => '#quicksilver',
+  'slack_username' => 'Pantheon-Quicksilver',
+  'always_show_text' => false,
+);
+
 // Load our hidden credentials.
 // See the README.md for instructions on storing secrets.
-$secrets = json_decode(file_get_contents($_SERVER['HOME'] . '/files/private/secrets.json'), 1);
-if ($secrets == FALSE) {
-  die('No secrets file found. Aborting!');
-}
-
-isset ($secrets['slack_channel']) ? $channel = $secrets['slack_channel'] : $channel = '#quicksilver';
+$secrets = pantheon_quicksilver_get_secrets(array('slack_url'), $defaults);
 
 // Prepare the slack payload as per:
 // https://api.slack.com/incoming-webhooks
@@ -47,32 +53,12 @@ $fields = array(
     'short' => 'false'
   )
 );
+$pantheon_yellow = '#EFD01B';
 $attachment = array(
   'fallback' => $text,
   'pretext' => 'Deploying :rocket:',
-  'color' => '#EFD01B', // Can either be one of 'good', 'warning', 'danger', or any hex color code, but this is Pantheon Yellow
+  'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
   'fields' => $fields
 );
-$post = array(
-  'username' => 'Pantheon-Quicksilver',
-  // 'text' => $text, // Uncomment if you always want to send a text message, otherwise display attachment->fallback when needed
-  'channel' => $channel,
-  'icon_emoji' => ':lightning_cloud:',
-  'attachments' => array($attachment)
-);
-$payload = json_encode($post);
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $secrets['slack_url']);
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-// Watch for messages with `terminus workflows watch --site=SITENAME`
-print("\n==== Posting to Slack ====\n");
-$result = curl_exec($ch);
-print("RESULT: $result");
-// $payload_pretty = json_encode($post,JSON_PRETTY_PRINT); // Uncomment to debug JSON
-// print("JSON: $payload_pretty"); // Uncomment to Debug JSON
-print("\n===== Post Complete! =====\n");
-curl_close($ch);
+
+pantheon_quicksilver_slack($secrets['slack_url'], $secrets['slack_channel'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
