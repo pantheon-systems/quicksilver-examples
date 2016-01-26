@@ -8,12 +8,6 @@ Note: This example could also be used to warm up cache after a live deployment.
 
 ## Instructions ##
 
-- Install [Guzzle](http://docs.guzzlephp.org/en/latest/overview.html#installation)
-
-It is recommended to install [Composer](https://getcomposer.org/doc/00-intro.md) dependencies at the root of your project. (Not the directory this example will be installed at)
-
-If your project doesn't already have composer dependencies, be sure to commit `composer.json`, `composer.lock`, and the `vendors` directory.
-
 - Add the example `status_check.php` script to the `private/scripts` directory of your code repository.
 - Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
 - Test a deploy out!
