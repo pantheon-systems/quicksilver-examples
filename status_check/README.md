@@ -8,8 +8,8 @@ Note: This example could also be used to warm up cache after a live deployment.
 
 ## Instructions ##
 
-- Add the example `status_check.php` script to the `private/scripts` directory of your code repository.
-- Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
+- Copy the example `status_check` directory to the `private/scripts` directory of your code repository.
+- Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy. Be sure to target the file for your platform.
 - Test a deploy out!
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
@@ -38,5 +38,5 @@ workflows:
     after:
       - type: webphp
         description: Status Check
-        script: private/scripts/status_check.php
+        script: private/scripts/status_check/status_check_drupal8.php
 ```
