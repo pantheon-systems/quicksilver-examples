@@ -8,15 +8,17 @@ It also contains a Drupal module which can be setup to receive and forward the w
 
 Setting up this example is easy:
 
-- Copy `webhook.json` to `files/private/webhook.json` after adding the webhook url and optional api key.
+- Copy `webhook.json` to `files/private/webhook.json` after adding the webhook url and an optional api key.
   - The token `:api_key` may be used in the url. It will be replaced with the value of the `api_key` property when data is sent.
 - Add the example `webhook.php` script to the `private/scripts/webhook.php` directory of your code repository.
-- Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
+- Add a Quicksilver operations in the example below to your `pantheon.yml`.
 - Clear cache, sync code, clone a db, or deploy and take a look at your webhook handler for events!
 
-If using the accompanying Drupal module, you may retrieve the api key from the configuration page after installation.
+If using the accompanying Drupal module, you will need to retrieve and set the api key from the configuration page after installation.
 
-You may want to use the `terminus workflows watch` command to get immediate debugging feedback.
+You may also set the Drupal module to test mode from the configuration page. This will write all the data received to the db log.
+
+Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
 ### Example `pantheon.yml` ###
 
@@ -50,7 +52,7 @@ workflows:
 
 ### Example POST data sent to the webhook url ###
 
-This is the data sent as a POST request to the `url` defined in `webhook.json`.
+Below is an example of the data sent as a POST request to the `url` defined in `webhook.json`.
 
 This is also the same `$data` passed to `hook_quicksilver($data)` in the drupal module.
 
