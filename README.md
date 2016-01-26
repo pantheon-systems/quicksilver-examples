@@ -1,5 +1,5 @@
-# Quicksilver Examples
-Example Quicksilver scripts for Power Users of Pantheon. These will allow you to automate more of your workflow, and integrate better with other cloud services.
+# Pantheon Cloud Integration Examples
+This repo contains example scripts for use with Quicksilver Platform Hooks. These will allow you to automate more of your workflow, and integrate better with other cloud services.
 
 The current release of Quicksilver supports one utility operation: `webphp`. This invokes a PHP script via the same runtime environment as the website itself. `php` scripts are subject to the same limits as any code on the platform, [like timeouts](https://pantheon.io/docs/articles/sites/timeouts/#timeouts-that-aren't-configurable), and cannot be batched. 
 
