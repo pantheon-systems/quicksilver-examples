@@ -1,0 +1,9 @@
+{
+  "email": "ops@example.com",
+  "base_url": "https://example.com/",
+  "check_paths": [
+    "",
+    "user",
+    "bad-path"
+  ]
+}
