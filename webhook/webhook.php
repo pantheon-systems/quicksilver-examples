@@ -11,19 +11,13 @@ if ($config == FALSE) {
 send_data($config);
 
 function send_data($config) {
-  $payload = json_encode(array('payload' => $_POST, 'env' => $_ENV));
+  $payload = http_build_query(array('payload' => $_POST, 'env' => $_ENV));
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $config['url']);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'X-Auth-Key: ' . isset($config['api_key']) ? $config['api_key'] : '',
-    'Content-Type: application/json'
-  ));
-  curl_setopt($ch, CURLOPT_POST, 1);
+  curl_setopt($ch, CURLOPT_URL, str_replace(':api_key', $config['api_key'], $config['url']));
+  curl_setopt($ch,CURLOPT_POST, 1);
+  curl_setopt($ch,CURLOPT_POSTFIELDS, $payload);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-  curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-
   print("\n==== Posting to Webhook URL ====\n");
   $result = curl_exec($ch);
   print("RESULT: $result");

@@ -1,4 +1,4 @@
 {
-  "url": "https://example.com/pantheon-webhook",
-  "api_token": ""
+  "url": "http://example.com/quicksilver/:api_key",
+  "api_key": ""
 }
