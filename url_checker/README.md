@@ -2,7 +2,7 @@
 
 This example demonstrates how check specific URLs after a live deployment.
 
-Each URL will be check for a return status of 200. Failures will be emailed to the address defined at the top of the script.
+Each URL will be checked for a return status of 200. Failures will be emailed to the address defined in `config.json`.
 
 Note: This example could also be used to warm up cache after a live deployment.
 
