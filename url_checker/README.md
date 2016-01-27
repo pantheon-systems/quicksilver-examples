@@ -37,6 +37,6 @@ workflows:
   deploy:
     after:
       - type: webphp
-        description: Status Check
-        script: private/scripts/status_check/status_check_(drupal8|drupal7|drupal6|wordpress).php
+        description: URL Checker
+        script: private/scripts/url_checker/url_checkerk_(drupal8|drupal7|drupal6|wordpress).php
 ```
