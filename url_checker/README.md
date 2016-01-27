@@ -8,7 +8,7 @@ Note: This example could also be used to warm up cache after a live deployment.
 
 ## Instructions ##
 
-- Copy the example `status_check` directory to the `private/scripts` directory of your code repository.
+- Copy the example `url_checker` directory to the `private/scripts` directory of your code repository.
 - Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy. Be sure to target the file for your platform.
 - Test a deploy out!
 
@@ -17,7 +17,7 @@ Optionally, you may want to use the `terminus workflows watch` command to get im
 Here is an example of what you might see when using `terminus workflows watch`:
 
 ```
-Status Checks
+URL Checks
 --------
   200 - https://example.com/
   200 - https://example.com/user
@@ -38,5 +38,5 @@ workflows:
     after:
       - type: webphp
         description: Status Check
-        script: private/scripts/status_check/status_check_drupal8.php
+        script: private/scripts/status_check/status_check_(drupal8|drupal7|drupal6|wordpress).php
 ```

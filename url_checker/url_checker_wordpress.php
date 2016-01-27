@@ -1,12 +1,12 @@
 <?php
 
-require './status_check_lib.php';
-status_check_init();
+require './url_checker_lib.php';
+url_checker_init();
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php';
 global $wpdb;
 
-$config = status_check_get_config();
+$config = url_checker_get_config();
 if (!$config) {
   die('Config not found.');
 }
@@ -26,7 +26,7 @@ foreach ($config['check_paths'] as $path) {
   }
 }
 
-$output = status_check_get_output($results, $failed);
+$output = url_checker_get_output($results, $failed);
 print $output;
 
 if ($failed > 0) {

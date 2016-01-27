@@ -1,13 +1,8 @@
 <?php
+require './url_checker_lib.php';
+url_checker_init();
 
-require './status_check_lib.php';
-status_check_init();
-
-define('DRUPAL_ROOT', $_SERVER['DOCUMENT_ROOT']);
-require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-drupal_bootstrap(DRUPAL_BOOTSTRAP_DATABASE);
-
-$config = status_check_get_config();
+$config = url_checker_get_config();
 if (!$config) {
   die('Config not found.');
 }
@@ -16,8 +11,7 @@ $failed = 0;
 $results = array();
 
 foreach ($config['check_paths'] as $path) {
-  $response = drupal_http_request($config['base_url'] . $path);
-  $status = $response['code'];
+  $status = url_checker_get_status_code($config['base_url'] . $path);
   $results[] = array(
     'url' => $config['base_url'] . $path,
     'status' => $status
@@ -27,7 +21,7 @@ foreach ($config['check_paths'] as $path) {
   }
 }
 
-$output = status_check_get_output($results, $failed);
+$output = url_checker_get_output($results, $failed);
 print $output;
 
 if ($failed > 0) {
