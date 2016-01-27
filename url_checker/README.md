@@ -38,5 +38,5 @@ workflows:
     after:
       - type: webphp
         description: URL Checker
-        script: private/scripts/url_checker/url_checkerk_(drupal8|drupal7|drupal6|wordpress).php
+        script: private/scripts/url_checker/url_checker_(drupal8|drupal7|drupal6|wordpress).php
 ```
