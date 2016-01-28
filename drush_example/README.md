@@ -11,6 +11,8 @@ The demonstration enables the [devel](https://www.drupal.org/project/devel) modu
 - Add a Quicksilver operation to your pantheon.yml to fire the script after a `clone_database`.
 - Test a database clone to dev from an environment where the devel module is not enabled.
 
+Note: While Pantheon does not require a `settings.php` file to run Drupal, Drush does. Make sure you have one committed to the codebase.
+
 ### Example `pantheon.yml` ###
 
 Here's an example of what your `pantheon.yml` would look like if this were the only Quicksilver operation you wanted to use:
