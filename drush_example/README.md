@@ -7,8 +7,8 @@ The demonstration enables the [devel](https://www.drupal.org/project/devel) modu
 ## Instructions ##
 
 - Be sure the [devel](https://www.drupal.org/project/devel) module is installed into your Drupal codebase.
-- Copy `drush_example` directory to the private/scripts directory of your code repository.
-- Add a Quicksilver operation to your pantheon.yml to fire the script after a clone_database.
+- Copy the `drush_example` directory into the private/scripts directory of your code repository.
+- Add a Quicksilver operation to your pantheon.yml to fire the script after a `clone_database`.
 - Test a database clone to dev from an environment where the devel module is not enabled.
 
 ### Example `pantheon.yml` ###
