@@ -69,26 +69,10 @@ Array
             [site_id] => 0f97107a-e292-431b-aa3e-46f2301f5f82
             [user_role] => owner
             [trace_id] => 1089ead4-c3e2-11e3-a7f5-bc764e10b0cb
+            [site_name] => quicksilver-examples
             [environment] => dev
             [wf_description] => Sync code on "dev"
             [user_email] => user@example.com
-        )
-    [env] => Array
-        (
-            [FRAMEWORK] => drupal
-            [DOCROOT] => /
-            [FILEMOUNT] => sites/default/files
-            [DRUPAL_HASH_SALT] => SC0Db2eILOEYG8+SQEjhqEBQP2vqFe/9fO1E2UVnprA=
-            [DB_HOST] => 10.0.0.0
-            [DB_PORT] => 19949
-            [DB_USER] => pantheon
-            [DB_PASSWORD] => 3efee03a914a435ba5b0cb1f4583c7bd
-            [DB_NAME] => pantheon
-            [PANTHEON_SITE] => 0e97107b-e291-431e-aa3a-46f2301f5f82
-            [PANTHEON_SITE_NAME] => quicksilver-examples
-            [PANTHEON_ENVIRONMENT] => dev
-            [PANTHEON_INFRASTRUCTURE_ENVIRONMENT] => live
-            [PATH] => /srv/bindings/2b41c95262a642cfb4914232e3de055d/bin:/usr/local/bin:/bin:/usr/bin:/srv/bin
         )
 
 )
