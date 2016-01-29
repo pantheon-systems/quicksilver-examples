@@ -11,7 +11,9 @@ if ($config == FALSE) {
 send_data($config);
 
 function send_data($config) {
-  $payload = http_build_query(array('payload' => $_POST, 'env' => $_ENV));
+  $payload = $_POST;
+  $payload['site_name'] = $_ENV['PANTHEON_SITE_NAME'];
+  $payload = http_build_query(array('payload' => $payload));
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, str_replace(':api_key', $config['api_key'], $config['url']));
   curl_setopt($ch,CURLOPT_POST, 1);
