@@ -67,3 +67,15 @@ $ terminus help workflows
 
 The `list` and `show` commands will allow you to explore previous workflows and their Quicksilver operations. The `watch` command is a developers best friend: it will set up Terminus to automatically "follow" the workflow activity of your site, dumping back any Quicksilver output along with them.
 
+## Troubleshooting ##
+- `pantheon.yml` goes in your drupal root, ie. your ~/code directory
+- `private` also goes in your drupal root, and is git-ignored by default. You must `--force` add any and all changes
+- You'll know `pantheon.yml` has been added correctly, and your quicksilver actions are registered when you see a message like the following on `git push`:
+  ```
+  remote: PANTHEON NOTICE:
+  remote: 
+  remote: Changes to `pantheon.yml` detected.
+  remote: 
+  remote: Successfully applied `pantheon.yml` to the 'dev' environment.
+  ```
+- In order for Quicksilver actions to be registered correctly, you should probably create your Pantheon site via `create`, rather than `import`. via [Greg Anderson](https://github.com/pantheon-systems/quicksilver-examples/issues/24#issuecomment-176919139)
