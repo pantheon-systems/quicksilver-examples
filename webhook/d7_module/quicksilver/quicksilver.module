@@ -47,11 +47,7 @@ function quicksilver_webhook_handler() {
 
   if (isset($submitted_key) && $submitted_key == $api_key) {
     $success = TRUE;
-    $data = array(
-      'payload' => $_POST['payload'],
-      'env' => $_POST['env']
-    );
-    module_invoke_all('quicksilver', $data);
+    module_invoke_all('quicksilver', $_POST);
   }
 
   if (variable_get('quicksilver_test_mode', TRUE)) {
