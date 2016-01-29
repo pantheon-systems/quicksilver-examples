@@ -3,9 +3,13 @@
 header('Content-Type: text/plain; charset=UTF-8');
 
 // Retrieve webhook config data
-$config = json_decode(file_get_contents($_SERVER['HOME'] . '/files/private/webhook.json'), 1);
-if ($config == FALSE) {
+$config_file = $_SERVER['HOME'] . '/files/private/webhook.json';
+if (!file_exists($config_file)) {
   die('files/private/webhook.json found. Aborting!');
+}
+$config = json_decode(file_get_contents($config_file), 1);
+if (!isset($config['url']) || !isset($config[''])) {
+  die('Config file must contain a url and api_key. Aborting!');
 }
 
 send_data($config);
