@@ -7,6 +7,7 @@ This example demonstrates how to POST workflow data to an external url.
 Setting up this example is easy:
 
 - Copy the `webhook` example directory to the `private/scripts` directory of your code repository.
+- Update the `$url` value in `private/scripts/webhook/webhook.php` to the destination you would like the workflow data to be posted.
 - Add the Quicksilver operations in the example below to your `pantheon.yml`.
 - Clear cache, sync code, clone a db, or deploy and take a look at your webhook handler for events!
 
