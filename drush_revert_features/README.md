@@ -1,6 +1,8 @@
 # Revert All Features Logs #
 
-This example will show you how to integrate drush commands into your quicksilver operations
+This example will show you how to integrate drush commands into your quicksilver operations, with the practical outcome of reverting features. You can use the method shown here to run any Drush command you like.
+
+Note that with the current `webphp` type operations, your timeout is limited to 120 seconds, so long-running operations should be avoided for now. 
 
 
 ## Instructions ##
