@@ -1,5 +1,4 @@
 <?php
-header('Content-Type: text/plain; charset=UTF-8');
 
 //Revert all features
 echo "Reverting all features...";
