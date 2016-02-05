@@ -29,7 +29,7 @@ Optionally, you may want to use the `terminus workflows watch` command to get im
 
 ### Example `pantheon.yml` ###
 
-Here's an example of what your `pantheon.yml` would look like if this were the only Quicksilver operation you wanted to use:
+Here's an example of what your `pantheon.yml` would look like if this were the only Quicksilver operation you wanted to use.  Pick and choose the exact workflows that you would like to see notifications for.
 
 ```yaml
 api_version: 1
@@ -38,7 +38,17 @@ workflows:
   deploy:
     after:
         - type: webphp
-          description: Post to Slack
+          description: Post to Slack on deploy
+          script: private/scripts/slack_notification.php
+  sync_code:
+    after:
+        - type: webphp
+          description: Post to Slack on sync code
+          script: private/scripts/slack_notification.php
+  clear_cache:
+    after:
+        - type: webphp
+          description: Someone is clearing the cache again
           script: private/scripts/slack_notification.php
 ```
 
