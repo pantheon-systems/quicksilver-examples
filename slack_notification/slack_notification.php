@@ -46,14 +46,14 @@ switch($_POST['wf_type']) {
   case 'deploy':
     // Find out what tag we are on and get the annotation.
     $deploy_tag = `git describe --tags`;
-    $annotation = `git tag -l -n99 $deploy_tag`;
+    $deploy_message = $_POST['deploy_message'];
 
     // Prepare the slack payload as per:
     // https://api.slack.com/incoming-webhooks
     $text = 'Deploy to the '. $_ENV['PANTHEON_ENVIRONMENT'];
     $text .= ' environment of '. $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
     $text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
-    $text .= "\n\n*DEPLOY MESSAGE*: $annotation";
+    $text .= "\n\n*DEPLOY MESSAGE*: $deploy_message";
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
