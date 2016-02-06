@@ -1,7 +1,5 @@
 <?php
-// TODO: this header should not be required...
-header('Content-Type: text/plain; charset=UTF-8');
-// Fetch metadata
+// Fetch metadata from Pantheon's internal API.
 $req = pantheon_curl('https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', NULL, 8443);
 $meta = json_decode($req['body'], true);
 

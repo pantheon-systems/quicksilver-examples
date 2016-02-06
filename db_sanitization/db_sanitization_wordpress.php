@@ -1,7 +1,4 @@
 <?php
-# We want to return the type `text/plain; charset=UTF-8` so that we can store logs correctly
-header('Content-Type: text/plain; charset=UTF-8');
-
 // Don't ever santize the database on the live environment. Doing so would
 // destroy the canonical version of the data.
 if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT !== 'live')) {
