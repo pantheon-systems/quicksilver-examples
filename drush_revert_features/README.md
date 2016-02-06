@@ -23,9 +23,14 @@ Here's an example of what your `pantheon.yml` would look like if this were the o
 api_version: 1
 
 workflows:
+  sync_code:
+    after:
+      - type: webphp
+        description: Revert all features after pushing code
+        script: private/scripts/revert_all_features.php
   deploy:
     after:
       - type: webphp
-        description: Revert All Features
+        description: Revert all features after deploying to test or live
         script: private/scripts/revert_all_features.php
 ```
