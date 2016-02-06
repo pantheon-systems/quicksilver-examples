@@ -67,3 +67,8 @@ $ terminus help workflows
 
 The `list` and `show` commands will allow you to explore previous workflows and their Quicksilver operations. The `watch` command is a developers best friend: it will set up Terminus to automatically "follow" the workflow activity of your site, dumping back any Quicksilver output along with them.
 
+## Developer Scripts ##
+
+See the `scripts` directory of this project for additional scripts useful to site development with Quicksilver.
+
+- secrets: Write service tokens (e.g. for slack notifications, or the Circle CI REST API) to the filesystem of your Pantheon site.
