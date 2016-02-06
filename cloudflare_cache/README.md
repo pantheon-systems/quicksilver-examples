@@ -1,6 +1,6 @@
 # Cloudflare Cache #
 
-This example demonstrates how to purge Cloudflare cache when your live site's cache is cleared.
+This example demonstrates how to purge Cloudflare cache when your live environment's cache is cleared.
 
 ## Instructions ##
 
@@ -27,3 +27,5 @@ workflows:
         description: Cloudflare Cache
         script: private/scripts/cloudflare_cache.php
 ```
+
+Note that you will almost always want to clear your CDN cache with the _after_ timing option. Otherwise you could end up with requests re-caching stale content. Caches should generally be cleared "bottom up".
