@@ -1,6 +1,6 @@
 # Webhook #
 
-This example demonstrates how to POST workflow data to an external url.
+This example demonstrates how to POST workflow data to an external url, a generic webhook implementation. 
 
 ## Instructions ##
 
@@ -43,11 +43,11 @@ workflows:
         script: private/scripts/webhook.php
 ```
 
-### Example POST data sent to the webhook url ###
+Depending on your use case, you may use the `before` as well as (or instead of) the `after` timing variant.
 
-Below is an example of the data sent as a POST request to the `url` defined in `webhook.json`.
+### Example POST data sent to the webhook ###
 
-This is also the same `$data` passed to `hook_quicksilver($data)` in the drupal module.
+Below is an example of the data sent as a POST request to the `url` defined in your script.
 
 ```
 Array
