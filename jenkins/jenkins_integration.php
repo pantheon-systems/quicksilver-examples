@@ -1,9 +1,10 @@
 <?php
-//For logging in terminus
-header('Content-Type: text/plain; charset=UTF-8');
-//Create curl post request to hit the Jenkins webhook
-$secrets = json_decode(file_get_contents($_SERVER['HOME'] . '/files/private/secrets.json'));
 
+// Load a secrets file. 
+// See the included example.secrets.json and instructions in README.
+$secrets = _get_secrets('secrets.json');
+
+//Create curl post request to hit the Jenkins webhook
 $curl = curl_init($secrets->jenkins_url);
 
 //Setup header with authentication
@@ -20,9 +21,31 @@ curl_setopt($curl, CURLOPT_POSTFIELDS, array(
 //Execute the request 
 $response = curl_exec($curl);
 
-if($response){
-	echo "Build Successful";
+// TODO: could produce some richer responses here. 
+// Could even chain this to a slack notification. It's up to you! 
+if ($response) {
+	echo "Build Queued";
 }
-else{
+else {
 	echo "Build Failed";
+}
+
+
+/**
+ * Get secrets from secrets file.
+ *
+ * @param string $file path within files/private that has your json
+ */
+function _get_secrets($file)
+{
+  $secrets_file = $_SERVER['HOME'] . '/files/private/' . $file;
+  if (!file_exists($secrets_file)) {
+    die('No secrets file found. Aborting!');
+  }
+  $secrets_json = file_get_contents($secrets_file);
+  $secrets = json_decode($secrets_json, 1);
+  if ($secrets == FALSE) {
+    die('Could not parse json in secrets file. Aborting!');
+  }
+  return $secrets;
 }
