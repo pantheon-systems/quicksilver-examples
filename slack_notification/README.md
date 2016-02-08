@@ -21,6 +21,12 @@ Setting up this example is easy:
 
 ```
 
+- Alternately, copy the `secrets` script to a directory in your $PATH, and use it to write your token to the secrets.json file:
+
+```shell
+  $> sudo cp scripts/secrets /usr/local/bin
+  $> secrets your-site dev slack_url "https://hooks.slack.com/services/MY/SECRET/URL"
+
 - Add the example `slack_notification.php` script to the `private` directory of your code repository.
 - Add a Quicksilver operation to your `pantheon.yml` to fire the script a deploy.
 - Test a deploy out!
