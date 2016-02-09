@@ -1,14 +1,13 @@
-# Status Check #
+# URL Checker #
 
-This example demonstrates how check specific URLs after a live deployment.
-
-Each URL will be checked for a return status of 200. Failures will be emailed to the address defined in `config.json`.
+This example demonstrates how check specific URLs after a live deployment. Failures are notified by email.
 
 Note: This example could also be used to warm up cache after a live deployment.
 
 ## Instructions ##
 
 - Copy the example `url_checker` directory to the `private/scripts` directory of your code repository.
+- Customize the config.json file as needed; specify URLs to test, and email address to send notifications to.
 - Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy. Be sure to target the file for your platform.
 - Test a deploy out!
 
@@ -38,5 +37,5 @@ workflows:
     after:
       - type: webphp
         description: URL Checker
-        script: private/scripts/url_checker/url_checker_(drupal8|drupal7|drupal6|wordpress).php
+        script: private/scripts/url_checker/url_checker.php
 ```
