@@ -38,11 +38,11 @@ workflows:
     after:
       - type: webphp
         description: Hipchat Notification - Deploy
-        script: private/scripts/hipchat_notification/hipchat_notification_deploy.php
+        script: private/scripts/hipchat_notification/hipchat_notification.php
   sync_code:
     after:
       - type: webphp
         description: Hipchat Notification - Sync
-        script: private/scripts/hipchat_notification/hipchat_notification_sync.php
+        script: private/scripts/hipchat_notification/hipchat_notification.php
 ```
 
