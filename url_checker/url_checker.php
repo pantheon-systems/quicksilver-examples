@@ -15,7 +15,7 @@ if (($_ENV['PANTHEON_ENVIRONMENT'] != 'live') || !is_set($config['base_url'])) {
 }
 
 // If the base url does not end in a '/', then add one to the end.
-if ($config['base_url'][strlen($config['base_url'])] != '/') {
+if ($config['base_url'][strlen($config['base_url'] - 1)] != '/') {
   $config['base_url'] .= '/';
 }
 
@@ -46,7 +46,13 @@ if (($failed > 0) && (isset($config['email']))) {
   $subject = 'Failed status check (' . $failed . ')';
   $message = "Below is a list of each tested url and its status:\n\n";
   $message .= $output;
-  mail($config['email'], $subject, $message);
+  $acceptedForDelivery = mail($config['email'], $subject, $message);
+  if ($acceptedForDelivery) {
+    print "Sent email to {$config['email']}.\n";
+  }
+  else {
+    print "Notification email to {$config['email']} could not be queued for delivery.\n";
+  }
 }
 
 /**
@@ -65,7 +71,8 @@ function url_checker_get_config() {
   if (!$config) {
     die('Config file did not contain valid json.');
   }
-  return $config;
+  // Convert json object to an array.
+  return (array) $config;
 }
 
 /**
