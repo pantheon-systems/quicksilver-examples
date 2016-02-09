@@ -2,12 +2,20 @@
 
 // Default values for parameters
 $defaults = array(
+  'hipchat_url' => 'https://api.hipchat.com/v2/room/',
   'hipchat_room_id' => 'quicksilver'
 );
 
 // Load our hidden credentials.
 // See the README.md for instructions on storing secrets.
 $secrets = _get_secrets(array('hipchat_auth_token'), $defaults);
+
+// Add a slash on the end of the hipchat URL if it does not already have one.
+if ($secrets['hipchat_url'][strlen($secrets['hipchat_url']) - 1] != '/') {
+  $secrets['hipchat_url'] .= '/';
+}
+
+$workflow_description = ucfirst($_POST['stage']) . ' ' . str_replace('_', ' ', $_POST['wf_type']);
 
 // Customize the message based on the workflow type.  Note that hipchat_notification.php
 // must appear in your pantheon.yml for each workflow type you wish to send notifications on.
@@ -21,7 +29,7 @@ switch($_POST['wf_type']) {
     $url = 'https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploy';
     $text = '<b>' . $_POST['user_fullname'] . '</b> deployed
     <a href="' . $url . '">' . $_ENV['PANTHEON_SITE_NAME'] . '</a><br />
-    <b>On branch "' . PANTHEON_ENVIRONMENT . '"</b><br />
+    <b>On branch "' . PANTHEON_ENVIRONMENT . '"</b><br />Workflow: ' . $workflow_description . '<br />
     Deploy Message: ' . htmlentities($deploy_message);
 
     break;
@@ -37,17 +45,17 @@ switch($_POST['wf_type']) {
     $url = 'https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/code';
     $text = '<b>' . $_POST['user_fullname'] . '</b> committed to
     <a href="' . $url . '">' . $_ENV['PANTHEON_SITE_NAME'] . '</a><br />
-    <b>On branch "' . PANTHEON_ENVIRONMENT . '"</b><br />
+    <b>On branch "' . PANTHEON_ENVIRONMENT . '"</b><br />Workflow: ' . $workflow_description . '<br />
     - ' . htmlentities($message) . ' (<a href="' . $url . '">' . $hash . '</a>)';
 
     break;
 
   default:
-    $text = $_POST['qs_description'];
+    $text = "Workflow $workflow_description<br />" . $_POST['qs_description'];
     break;
 }
 
-_hipchat_notification($secrets['hipchat_room_id'], $secrets['hipchat_auth_token'], $text);
+_hipchat_notification($secrets['hipchat_url'], $secrets['hipchat_room_id'], $secrets['hipchat_auth_token'], $text);
 
 /**
  * Get secrets from secrets file.
@@ -76,11 +84,12 @@ function _get_secrets($requiredKeys, $defaults)
 /**
  * Send a notification to hipchat
  */
-function _hipchat_notification($room_id, $auth_token, $text) {
+function _hipchat_notification($hipchat_url, $room_id, $auth_token, $text) {
   $data = array('color' => 'yellow', 'message' => $text);
   $payload = json_encode($data);
+  $hipchat_API_URL = $hipchat_url . $room_id . '/notification';
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, 'https://api.hipchat.com/v2/room/' . $room_id . '/notification');
+  curl_setopt($ch, CURLOPT_URL, $hipchat_API_URL);
   curl_setopt($ch, CURLOPT_POST, 1);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -91,14 +100,15 @@ function _hipchat_notification($room_id, $auth_token, $text) {
   curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 
   // Uncomment this section for debug
-  /*
+/*
   print("\n==== Begin Debug Data ====\n");
+  print "URL: " . $hipchat_API_URL . "\n";
   print "Room ID: " . $room_id . "\n";
   print "Auth Token: " . $auth_token . "\n";
   print "Payload: \n";
   print_r($data);
   print("\n==== End Debug Data ====\n");
-  */
+*/
 
   // Watch for messages with `terminus workflows watch --site=SITENAME`
   print("\n==== Posting to Hipchat ====\n");
