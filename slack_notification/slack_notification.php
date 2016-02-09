@@ -33,6 +33,11 @@ $fields = array(
     'value' => $_POST['user_email'],
     'short' => 'true'
   ),
+  array( // Render workflow phase that the message was sent
+    'title' => 'Workflow',
+    'value' => ucfirst($_POST['stage']) . ' ' . str_replace('_', ' '. $_POST['wf_type']),
+    'short' => 'true'
+  ),
   array(
     'title' => 'View Dashboard',
     'value' => '<https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>',
@@ -95,7 +100,7 @@ switch($_POST['wf_type']) {
     break;
 
   default:
-    $text = $_POST['wf_description'];
+    $text = $_POST['qs_description'];
     break;
 }
 
