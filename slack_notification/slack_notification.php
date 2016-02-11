@@ -62,12 +62,10 @@ switch($_POST['wf_type']) {
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
-    $fields[] += array(
-      array(
-        'title' => 'Deploy Message',
-        'value' => $annotation,
-        'short' => 'false'
-      ),
+    $fields[] = array(
+      'title' => 'Deploy Message',
+      'value' => $annotation,
+      'short' => 'false'
     );
     break;
 
