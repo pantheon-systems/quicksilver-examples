@@ -64,7 +64,7 @@ switch($_POST['wf_type']) {
     // https://api.slack.com/docs/attachments
     $fields[] = array(
       'title' => 'Deploy Message',
-      'value' => $annotation,
+      'value' => $text,
       'short' => 'false'
     );
     break;
