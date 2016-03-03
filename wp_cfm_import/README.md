@@ -14,16 +14,19 @@ stored in git.
  
 ## Instructions
 
+### Install WP-CFM
+
+Install the wp-cfm plugin from the master branch on [Github](https://github.com/forumone/wp-cfm).  (We need to use the
+master branch here, because it allows us to set the configuration file locations - this functionality isn't in the
+code on wordpress.org yet).
+
 ### Hiding configuration files
 
 By default WP-CFM looks for it's configuration files in `/config`, relative to the document root of your site.  That's
 not a great example on Pantheon, because it will be publically browsable. Instead, it would be better to store the files
-in `/private/config`.  To do this:
-
-1. Install the wp-cfm from the master branch on [Github](https://github.com/forumone/wp-cfm).  The
-   plugin in the WordPress repository has not been updated with the ability to change locations.
-2. Add a mu-plugin to your site to set the wp-cfm directory paths early in the WordPress loading process.  An example mu-plugin
-   included in the file `alter_wpcfm_config_path.php` in this repo.  Just copy it to `wp-config/mu-plugins`.
+in `/private/config`.  To do this, add a mu-plugin to your site to set the wp-cfm directory paths early in the 
+WordPress loading process.  An example mu-plugin is included in the file `alter_wpcfm_config_path.php` in this repo.  
+Just copy it to `wp-config/mu-plugins`.
    
 ### Creating a WP-CFM configuration file
 
