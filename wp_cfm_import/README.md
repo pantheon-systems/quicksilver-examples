@@ -16,9 +16,7 @@ stored in git.
 
 ### Install WP-CFM
 
-Install the wp-cfm plugin from the master branch on [Github](https://github.com/forumone/wp-cfm).  (We need to use the
-master branch here, because it allows us to set the configuration file locations - this functionality isn't in the
-code on wordpress.org yet).
+Install the [wp-cfm plugin](https://wordpress.org/plugins/wp-cfm/) in the usual way.
 
 ### Hiding configuration files
 
