@@ -34,17 +34,14 @@ This should be straight forward, but you need to know which _wp_options_ values 
 find out is this:
 
 1. Put your site into sftp mode.
-1. Clone your database from the live environment.
-2. Create a temporary wp-cfm bundle tracking all the options and push it to the filesystem.
-3. Make the changes you want to see in your development site.
-4. Use the _diff_ functionality to compare the saved bundle with the current state of the database.
-5. The options that have changed are the ones you should track.
-6. Re-clone the database from the live environment.
-7. Make the changes you want again.
-8. Make a new bundle, and track only the options you identified.
-9. Push the bundle to the filesystem.
-10. Delete the temporary wp-cfm bundle you created.
-11. Put your site back into git mode, making sure the new bundle gets saved.
+2. Clone your database from the live environment.
+3. Create a wp-cfm bundle, tracking all the options, and push it to the filesystem.
+4. Make the changes you want to see in your development site.
+5. Use the diff functionality to compare the saved bundle with the current state of the database.
+6. Update the wp-cfm bundle to track only the options that changed in step 5.
+7. Push the bundle to the filesystem.
+8. Commit the new bundle files in the Pantheon dashboard.
+9. Put your site back into git mode.
 
 ### Automating loading the WP-CFM configuration file
 
