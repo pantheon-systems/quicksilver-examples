@@ -9,5 +9,5 @@
 */
 
 // Tell wp-cfm where our config files live
-add_filter('wpcfm_content_dir', function($var) { return $_SERVER['DOCUMENT_ROOT'] . '/private/config'; });
-add_filter('wpcfm_content_url', function($var) { return WP_HOME . '/private/config'; });
+add_filter('wpcfm_config_dir', function($var) { return $_SERVER['DOCUMENT_ROOT'] . '/private/config'; });
+add_filter('wpcfm_config_url', function($var) { return WP_HOME . '/private/config'; });
