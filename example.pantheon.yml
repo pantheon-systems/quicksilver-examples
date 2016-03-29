@@ -38,6 +38,9 @@ workflows:
         description: sanitize the db after deploy to test
         script: private/scripts/sanitize_after_db_clone.php
       - type: webphp
+        description: do a visual regression test with Spotbot.qa 
+        script: private/scripts/spotbot_visualregression.php
+      - type: webphp
         description: pull configuration into the database
         script: private/scripts/config_pull_after_deploy.php
       - type: webphp
