@@ -41,6 +41,9 @@ workflows:
         description: pull configuration into the database
         script: private/scripts/config_pull_after_deploy.php
       - type: webphp
+        description: do a visual regression test with Backtrac.io
+        script: private/scripts/backtrac_visualregression.php
+      - type: webphp
         description: post to slack after each deploy
         script: private/scripts/slack_after_deploy.php
 
