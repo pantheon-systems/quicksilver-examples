@@ -1,14 +1,19 @@
 # Visual Regression Testing via Drulenium #
 
-This example will show you how you can automatically run visual tests on your pantheon hosted environments using Drulenium suite of modules & libraries.
+This example will show you how you can automatically run visual tests on your pantheon hosted environments using Drulenium suite of modules & libraries. 
+
+This will allow you to do a comparative visual diff between the test environment and the development environemnt(including Multidev environments) everytime you push code to the development environment.
+
+As a note, Tests run on https://travis-ci.org/ and is free to use for unlimited number of pages but the test results are public. For more information read http://drulenium.org/how-to-automate-testing-in-pantheon-hosted-website
 
 ## Instructions ##
 
 Setting up this example is easy:
 
-1. Add the post_drulenium_github.php to the `private` directory of your code repository.
-2. Add a Quicksilver operation to your `pantheon.yml` to fire the script after code sync.
-3. Test a code sync out!
+1. Add the example post_drulenium_github.php script to the 'private/scripts/' directory of your code repository.
+2. Modify the post_drulenium_github.php script to include your Site URL's, Site pages & email to notify upon completion of the test run.
+3. Add a Quicksilver operation to your `pantheon.yml` to fire the script after code sync.
+4. Test a code sync out!
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
