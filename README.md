@@ -35,6 +35,15 @@ workflows:
 
 Note that if you want to hook onto deploy workflows, you'll need to deploy your `pantheon.yml` into an environment first. Likewise, if you are adding new operations or changing the script an operation will target, the deploy which contains those adjustments to pantheon.yml will not self-referentially exhibit the new behavior. Only subsequent deploys will be affected.
 
+**When Updating:**  
+**pantheon.yml**: Updates will fire on the next sequential workflow, not post-deploy.  
+**scripts**:  Updates will fire post-deploy.  
+**script location**: Updates will fire on next sequential workflow, not post-deploy.
+
+**When Adding:**  
+**pantheon.yml**: Updates will fire on the next sequential workflow, not post-deploy.  
+**scripts**: Updates will fire on the next sequential workflow.  
+
 ## Security ##
 
 Quicksilver scripts should be tracked in the `private` directory of your project repository, which is not accessible to the public Internet. Scripts there can only be executed by the Pantheon platform. We recommend setting up a dedicated directory (e.g. `private/scripts` or `private/quicksilver`) for tracking these files.
