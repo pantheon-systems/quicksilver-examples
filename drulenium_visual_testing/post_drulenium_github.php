@@ -1,5 +1,10 @@
 <?php
 
+// An example of usign Pantheon's Quicksilver technology to do 
+// automatic visual regression testing using Drulenium
+
+// Modify default Test definition accordingly.
+/* Example
 $test_definition = array (
   'staging_environment_domain' => 'http://test-drulenium-hosted.pantheonsite.io/',
   'dev_environment_domain_suffix' => '-drulenium-hosted.pantheonsite.io/',
@@ -12,7 +17,23 @@ $test_definition = array (
     'node',
   ),
 );
+*/
+$test_definition = array (
+  'staging_environment_domain' => 'http://test-<add-my-site-name>.pantheonsite.io/',
+  'dev_environment_domain_suffix' => '-<add-my-site-name>.pantheonsite.io/',
+  'notification_email_ids' => array(
+    'add-my-email-here',
+  ),
+  'test_pages_sitemap' => array(
+    'add-my-first-page-here',
+    'add-my-second-page-here',
+    'add-my-third-page-here',
+  ),
+);
+/*----------END of REQUIRED Simple Configuration----------*/
 
+// Modify below variables if you are using your personal github account like https://github.com/Drulenium/pantheon-travis
+/*----------START of OPTIONAL Advanced Configuration-----------*/
 $github_username = 'Drulenium';
 $github_repository = 'pantheon-travis';
 $github_accesstoken = 'a06e6d536db8743056e1faae60aa803a0b17b13f';
@@ -93,4 +114,4 @@ function github_post_content($url, $accesstoken, $method = "POST", $parameters) 
   curl_close($ch);
   return $content;
 }
-// EOF 1
+// EOF
