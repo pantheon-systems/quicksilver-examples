@@ -10,7 +10,7 @@ workflows:
         description: post to slack after each code pushed
         script: private/scripts/slack_after_code_push.php
 
-  # Database Clones: Notify, sanitize, and notify on db clone
+  # Database Clones: Notify, sanitize, generate content, and notify on db clone
   clone_database:
     before:
       - type: webphp
@@ -20,6 +20,9 @@ workflows:
       - type: webphp
         description: sanitize the db after each database Clone
         script: private/scripts/sanitize_after_db_clone.php
+      - type: webphp
+        description: generate development article content after the database clones 
+        script: private/scripts/generate_dev_content.php
       - type: webphp
         description: post to slack after the database clones
         script: private/scripts/slack_after_db_clone.php
