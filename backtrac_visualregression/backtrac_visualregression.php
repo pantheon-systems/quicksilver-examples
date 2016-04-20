@@ -4,6 +4,9 @@
 // automatic visual regression testing using Backtrac.io
 
 // Provide the API Key provided by Backtrac.io
+// For extra security, you can store this information in
+// the private area of the files directory as documented
+// at https://github.com/pantheon-systems/quicksilver-examples.
 $api_key = 'add-api-key-here';
 
 // Provide the Project ID for the project on Backtrac.io
