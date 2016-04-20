@@ -11,10 +11,10 @@ As a note, Tests run on https://travis-ci.org/ and is free to use for unlimited 
 Setting up this example is easy:
 
 1. Add the example post_drulenium_github.php script to the 'private/scripts/' directory of your code repository.
-2. Add the secret github account parameters into a file called secrets.json and store it in the private files directory of Test & Live environments and Clone files from the test environment into other dev environments. ```{
+2. Add the secret github account parameters into a file called secrets.json and store it in the private files directory of Test & Live environments and Clone files from the test environment into other dev environments. ```json {
   "github_username": "Drulenium",
   "github_repository": "pantheon-travis",
-  "github_accesstoken": "a06e6d536db8743056e1faae60aa803a0b17b13f",
+  "github_accesstoken": "ddedc2530c38734ea00651b80d41de5f1d2a64df",
   "github_master_branch_sha": "0600c12ea73e185ac7f29a2d33deda1708672996"
 }```
 3. Modify the post_drulenium_github.php script to include your Site pages & email to notify upon completion of the test run.
