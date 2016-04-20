@@ -14,6 +14,7 @@ $test_id = 'add-test-id-here';
 
 // If we are deploying to test, run a performance test on that environment
 // The specifics of the test will be defined on Loadimpact.com
+if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT == 'test')) {
   echo 'Starting a performance test on the test environment...' . "\n";
   $curl = curl_init();
   $curl_options = array(
@@ -44,3 +45,4 @@ $test_id = 'add-test-id-here';
   else {
     echo 'There has been an error: ' . ucwords($curl_response->message) . "\n";
   }
+}
