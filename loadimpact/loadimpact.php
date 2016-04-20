@@ -30,7 +30,7 @@ if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT == 'test')) {
 
   if (isset($curl_response->id)) {
     echo 'You have kicked off test #' . $curl_response->id . "\n";
-    echo 'Check our your results here: https://app.loadimpact.com/tests/' . $curl_response->id . "\n";
+    echo 'Check our your results here: https://app.loadimpact.com/tests/' . $test_id . "\n";
   }
   else {
     echo 'There has been an error: ' . ucwords($curl_response->message) . "\n";
