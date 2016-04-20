@@ -27,22 +27,12 @@ if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT == 'test')) {
   curl_setopt_array($curl, $curl_options);
   $curl_response = json_decode(curl_exec($curl));
   curl_close($curl);
- 
+
   if (isset($curl_response->id)) {
     echo 'You have kicked off test #' . $curl_response->id . "\n";
-    $curl_two = curl_init();
-    $curl_two_options = array(
-      CURLOPT_URL => 'https://api.loadimpact.com/v2/tests/' . $test_id,
-      CURLOPT_USERPWD => $api_key . ':',
-      CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-      CURLOPT_RETURNTRANSFER => 1,
-    ); 
-    curl_setopt_array($curl_two, $curl_two_options);
-    $curl_two_response = json_decode(curl_exec($curl_two));
-    curl_close($curl_two);
-    echo "Check out the result here: " . $curl_two_response->public_url . "\n";
+    echo 'Check our your results here: https://app.loadimpact.com/tests/3366431' . "\n";
   }
   else {
     echo 'There has been an error: ' . ucwords($curl_response->message) . "\n";
-  }
+  } 
 }
