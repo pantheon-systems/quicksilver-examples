@@ -27,7 +27,7 @@ workflows:
         description: post to slack after the database clones
         script: private/scripts/slack_after_db_clone.php
   
-  # Code Deploys: Notify, Sanitize (if on test), post to new relic, update db, and notify completion
+  # Code Deploys: Notify, Sanitize (if on test), post to new relic, testd, update db, and notify completion
   deploy:
     before:
       - type: webphp
@@ -49,6 +49,9 @@ workflows:
       - type: webphp
         description: do a visual regression test with Backtrac.io
         script: private/scripts/backtrac_visualregression.php
+      - type: webphp
+        description: do a performance test with Load Impact
+        script: private/scripts/loadimpact.php
       - type: webphp
         description: post to slack after each deploy
         script: private/scripts/slack_after_deploy.php
