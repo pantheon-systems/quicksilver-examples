@@ -6,8 +6,6 @@
 // Modify default Test definition accordingly.
 /* Example
 $test_definition = array (
-  'staging_environment_domain' => 'http://test-drulenium-hosted.pantheonsite.io/',
-  'dev_environment_domain_suffix' => '-drulenium-hosted.pantheonsite.io/',
   'notification_email_ids' => array(
     'drulenium@mailinator.com',
   ),
@@ -18,9 +16,8 @@ $test_definition = array (
   ),
 );
 */
+/*----------START of REQUIRED Simple Configuration----------*/
 $test_definition = array (
-  'staging_environment_domain' => 'http://test-<add-my-site-name>.pantheonsite.io/',
-  'dev_environment_domain_suffix' => '-<add-my-site-name>.pantheonsite.io/',
   'notification_email_ids' => array(
     'add-my-email-here',
   ),
@@ -32,13 +29,13 @@ $test_definition = array (
 );
 /*----------END of REQUIRED Simple Configuration----------*/
 
-// Modify below variables if you are using your personal github account like https://github.com/Drulenium/pantheon-travis
-/*----------START of OPTIONAL Advanced Configuration-----------*/
-$github_username = 'Drulenium';
-$github_repository = 'pantheon-travis';
-$github_accesstoken = 'a06e6d536db8743056e1faae60aa803a0b17b13f';
+$secrets = _get_secrets(array('github_username', 'github_repository', 'github_accesstoken', 'github_master_branch_sha'), $defaults = array());
 
-$github_master_branch_sha = '0600c12ea73e185ac7f29a2d33deda1708672996';
+$github_username = $secrets['github_username'];
+$github_repository = $secrets['github_repository'];
+$github_accesstoken = $secrets['github_accesstoken'];
+
+$github_master_branch_sha = $secrets['github_master_branch_sha'];
 
 /*
  * Create a git branch. branch name will be like tests/test-XXXX
@@ -57,8 +54,8 @@ print('\r\n');
 /*
  * Structure the test.json file
  */
-$test_definition['dev_environment_domain'] = 'http://' . PANTHEON_ENVIRONMENT . $test_definition['dev_environment_domain_suffix'];
-unset($test_definition['dev_environment_domain_suffix']);
+$test_definition['staging_environment_domain'] = 'http://test-'. $_ENV['PANTHEON_SITE_NAME'] . '.pantheonsite.io/';
+$test_definition['dev_environment_domain'] = 'http://' . PANTHEON_ENVIRONMENT . '-'. $_ENV['PANTHEON_SITE_NAME'] . '.pantheonsite.io/';
 
 /*
  * Upload the test.json file to github repository
@@ -113,5 +110,29 @@ function github_post_content($url, $accesstoken, $method = "POST", $parameters) 
   $content = curl_exec($ch);
   curl_close($ch);
   return $content;
+}
+
+/**
+ * Get secrets from secrets file.
+ *
+ * @param array $requiredKeys  List of keys in secrets file that must exist.
+ */
+function _get_secrets($requiredKeys, $defaults)
+{
+  $secretsFile = $_SERVER['HOME'] . '/files/private/secrets.json';
+  if (!file_exists($secretsFile)) {
+    die('No secrets file found. Aborting!');
+  }
+  $secretsContents = file_get_contents($secretsFile);
+  $secrets = json_decode($secretsContents, 1);
+  if ($secrets == FALSE) {
+    die('Could not parse json in secrets file. Aborting!');
+  }
+  $secrets += $defaults;
+  $missing = array_diff($requiredKeys, array_keys($secrets));
+  if (!empty($missing)) {
+    die('Missing required keys in json secrets file: ' . implode(',', $missing) . '. Aborting!');
+  }
+  return $secrets;
 }
 // EOF
