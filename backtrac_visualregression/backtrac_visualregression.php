@@ -18,7 +18,7 @@ if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT == 'test')) {
   echo 'Starting a visual regresison test between the live and test environments...' . "\n";
   $curl = curl_init();
   $curl_options = array(
-    CURLOPT_URL => 'http://backtrac.io/api/project/' . $project_id . '/compare_prod_stage',
+    CURLOPT_URL => 'https://backtrac.io/api/project/' . $project_id . '/compare_prod_stage',
     CURLOPT_HTTPHEADER => array('x-api-key: ' . $api_key),
     CURLOPT_POST => 1,
     CURLOPT_RETURNTRANSFER => 1,
