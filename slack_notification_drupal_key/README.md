@@ -5,8 +5,8 @@ This script shows how easy it is to integrate Slack notifications from your Pant
 ## Instructions ##
 
 1. [Enable Incoming Webhooks](https://my.slack.com/services/new/incoming-webhook/) for your Slack instance.
-2. Examine the secret Webhook URL, which should look something like: https://hooks.slack.com/services/MY/SECRET/URL and copy everything after https://hooks.slack.com/services/ and put it into a new key with a machine name of `slack_url_secret`. You can add this key at: /admin/config/system/keys/add of your site.
-3. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control. 
+2. Examine the secret Webhook URL, which should look something like: `https://hooks.slack.com/services/MY/SECRET/URL` and copy everything after `https://hooks.slack.com/services/` and put it into a new key with a machine name of `slack_url_secret`. You can add this key at: /admin/config/system/keys/add of your site.
+3. Add the example `slack_notification.php` and `key.php` scripts to `private` directory in the root of your site's codebase, that is under version control. 
 4. Add Quicksilver operations to your `pantheon.yml`
 5. Test a deploy out!
 
