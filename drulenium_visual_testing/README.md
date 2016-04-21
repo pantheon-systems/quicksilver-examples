@@ -11,7 +11,7 @@ As a note, Tests run on https://travis-ci.org/ and is free to use for unlimited 
 Setting up this example is easy:
 
 1. Add the example post_drulenium_github.php script to the 'private/scripts/' directory of your code repository.
-2. Add the secret github account parameters into a file called secrets.json and store it in the private files directory of Test & Live environments and Clone files from the test environment into other dev environments.
+2. Add the secret github account parameters into a file called secrets.json and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of Test & Live environments and Clone files from the test environment into other dev environments.
 
   ```json
     {
