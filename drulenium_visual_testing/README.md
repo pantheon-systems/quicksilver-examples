@@ -17,7 +17,7 @@ Setting up this example is easy:
     {
       "github_username": "Drulenium",
       "github_repository": "pantheon-travis",
-      "github_accesstoken": "ddedc2530c38734ea00651b80d41de5f1d2a64df",
+      "github_accesstoken": "337047b8d25c3e0fff51c9e1aa7134ceb1a0304d",
       "github_master_branch_sha": "0600c12ea73e185ac7f29a2d33deda1708672996"
     }
   ```
