@@ -105,7 +105,7 @@ switch($_POST['wf_type']) {
 
 $attachment = array(
   'fallback' => $text,
-  'pretext' => 'Deploying :rocket:',
+  'title' => 'Deploying :rocket:',
   'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
   'fields' => $fields
 );
