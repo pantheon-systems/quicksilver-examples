@@ -54,6 +54,9 @@ switch($_POST['wf_type']) {
     $deploy_tag = `git describe --tags`;
     $deploy_message = $_POST['deploy_message'];
 
+    // Set a Slack Attachments title
+    $title = 'Deploying :rocket:';
+
     // Prepare the slack payload as per:
     // https://api.slack.com/incoming-webhooks
     $text = 'Deploy to the '. $_ENV['PANTHEON_ENVIRONMENT'];
@@ -76,6 +79,9 @@ switch($_POST['wf_type']) {
     $email = `git log -1 --pretty=%ce`;
     $message = `git log -1 --pretty=%B`;
     $hash = `git log -1 --pretty=%h`;
+
+    // Set a Slack Attachments title
+    $title = 'Syncing code :fax:';
 
     // Prepare the slack payload as per:
     // https://api.slack.com/incoming-webhooks
@@ -105,7 +111,7 @@ switch($_POST['wf_type']) {
 
 $attachment = array(
   'fallback' => $text,
-  'title' => 'Deploying :rocket:',
+  'title' => $title,
   'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
   'fields' => $fields
 );
