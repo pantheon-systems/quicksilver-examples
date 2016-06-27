@@ -4,13 +4,13 @@ This example will show you how you can automatically log changes to your site in
 
 This script uses a couple clever tricks to get data about the platform. First of all it uses the `pantheon_curl()` command to fetch the extended metadata information for the site/environment, which includes the New Relic API key. It also uses data within the git repository on the platform to pull out deploy tag numbers and log messages. 
 
-> **Note:** New Relic's Deployments feature is not available for sites using the APM Lite plan. This example will only work for sites with New Relic APM Professional. It will work with all Pantheon sites during the two-week free trial of New Relic Pro that begins after you enable the add-on. 
+> **Note:** This example will work for all Pantheon sites once the bundled [New Relic APM Pro feature](https://pantheon.io/features/new-relic) is activated, regardless of service level. 
 
 ## Instructions ##
 
 Setting up this example is easy:
 
-1. [Enable New Relic](https://pantheon.io/docs/articles/sites/newrelic/) for your site. 
+1. [Activate New Relic Pro](https://pantheon.io/docs/new-relic/#activate-new-relic-pro) within your site Dashboard. 
 2. Add the example `new_relic_deploy.php` script to the `private` directory of your code repository.
 3. Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
 4. Test a deploy out!
