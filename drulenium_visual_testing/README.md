@@ -21,9 +21,21 @@ Setting up this example is easy:
 	  "drulenium_org_project_uuid":"***"
 	}
   ```
-  
-3. Add a Quicksilver operation to your `pantheon.yml` to fire the script after code sync.
-4. Test a code sync out!
+3. This script uses drush. While Pantheon does not require a settings.php file to run Drupal, Drush does. Make sure you have one committed to the codebase. You can simply copy the sites/default/default.settings.php to sites/default/settings.php . [Pantheon drush doc](https://pantheon.io/docs/drush/).
+4. Be sure the Drulenium module, it's dependencies & libraries are installed into your Drupal codebase.
+
+  ```
+    Put your pantheon environment in SFTP mode and run these drush commands.
+    Terminus drush "en drulenium drulenium_gitlab -y"
+    Terminus drush "gitlab-download-client"
+    Terminus drush "vr-download-blockly"
+  ```
+5. Register at Drulenium.org & configure the module with keys at http://dev-example-qs.pantheonsite.io/drulenium/settings/hosted
+6. Register at https://api.imgur.com/oauth2/addclient (Type: Anonymous usage without user authorization) & configure the Drulenium Imgur module with keys at http://dev-example-qs.pantheonsite.io/drulenium/settings/imgur
+7. Add test site URL's at http://dev-example-qs.pantheonsite.io/drulenium/settings
+8. Go to the Drulenium GitLab module configuration page at http://dev-example.pantheonsite.io/drulenium/settings/gitlab and "Initialize" which will use your Gitlab account and fork the https://gitlab.com/TechNikh/drulenium_gitlab_server project along with setting required build variables you set in 5th, 6th & 7th steps above(DRULENIUM_ORG_API_SECRET, DRULENIUM_ORG_PROJECT_UUID, IMGUR_CLIENT_ID, IMGUR_CLIENT_SECRET, BASELINE_URL, TEST_URL_PREFIX, TEST_URL_SUFFIX).
+9. Add a Quicksilver operation to your `pantheon.yml` to fire the script after code sync.
+10. Test a code sync out!
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
