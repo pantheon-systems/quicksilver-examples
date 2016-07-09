@@ -4,27 +4,26 @@ This example will show you how you can automatically run visual tests on your pa
 
 This will allow you to do a comparative visual diff between the test environment and the development environemnt(including Multidev environments) everytime you push code to the development environment.
 
-As a note, Tests run on https://travis-ci.org/ and is free to use for unlimited number of pages but the test results are public. For more information read http://drulenium.org/how-to-automate-testing-in-pantheon-hosted-website
+As a note, Tests run on https://gitlab.com/ and is free to use for unlimited number of pages. For more information read http://drulenium.org/how-to-automate-testing-in-pantheon-hosted-website
 
 ## Instructions ##
 
 Setting up this example is easy:
 
-1. Add the example post_drulenium_github.php script to the 'private/scripts/' directory of your code repository.
-2. Add the secret github account parameters into a file called secrets.json and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of Test & Live environments and Clone files from the test environment into other dev environments.
+1. Add the example visual_regression_test_setup.gitlab.php & visual_regression_test_run.php scripts to the 'private/scripts/drulenium_visual_testing' directory of your code repository.
+2. Add the secret gitlab & Drulenium.org account parameters into a file called secrets.json and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of Test & Live environments and Clone files from the test environment into other dev environments.
 
   ```json
-    {
-      "github_username": "Drulenium",
-      "github_repository": "pantheon-travis",
-      "github_accesstoken": "337047b8d25c3e0fff51c9e1aa7134ceb1a0304d",
-      "github_master_branch_sha": "0600c12ea73e185ac7f29a2d33deda1708672996"
-    }
+    {  
+	  "gitlab_token":"***",
+	  "gitlab_project":"***",
+	  "drulenium_org_api_secret":"***",
+	  "drulenium_org_project_uuid":"***"
+	}
   ```
   
-3. Modify the post_drulenium_github.php script to include your Site pages & email to notify upon completion of the test run.
-4. Add a Quicksilver operation to your `pantheon.yml` to fire the script after code sync.
-5. Test a code sync out!
+3. Add a Quicksilver operation to your `pantheon.yml` to fire the script after code sync.
+4. Test a code sync out!
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
@@ -41,7 +40,11 @@ workflows:
   sync_code:
     after:
       - type: webphp
-        description: test visually after each code push
-        script: private/scripts/post_drulenium_github.php
+        description: Setup Drulenium with gitlab configuration
+        script: private/scripts/drulenium/visual_regression_test_setup.gitlab.php
+      - type: webphp
+        description: Run Drulenium tests after each code push
+        script: private/scripts/drulenium/visual_regression_test_run.php
+
 ```
 
