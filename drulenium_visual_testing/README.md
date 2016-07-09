@@ -24,7 +24,8 @@ Setting up this example is easy:
 5. Register at https://api.imgur.com/oauth2/addclient (Type: Anonymous usage without user authorization) & configure the Drulenium Imgur module with keys at http://dev-example-qs.pantheonsite.io/drulenium/settings/imgur
 6. Add test site URL's at http://dev-example-qs.pantheonsite.io/drulenium/settings
 7. Go to the Drulenium GitLab module configuration page at http://dev-example.pantheonsite.io/drulenium/settings/gitlab and "Initialize" which will use your Gitlab account and fork the https://gitlab.com/TechNikh/drulenium_gitlab_server project along with setting required build variables you set in 5th, 6th & 7th steps above(DRULENIUM_ORG_API_SECRET, DRULENIUM_ORG_PROJECT_UUID, IMGUR_CLIENT_ID, IMGUR_CLIENT_SECRET, BASELINE_URL, TEST_URL_PREFIX, TEST_URL_SUFFIX).
-8. Add the secret gitlab & Drulenium.org account parameters into a file called secrets.json and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of Test & Live environments and Clone files from the test environment into other dev environments.
+8. Create tests with Category: "CI-regression" at http://dev-example-qs.pantheonsite.io/drulenium/tests/add
+9. Add the secret gitlab & Drulenium.org account parameters into a file called secrets.json and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of Test & Live environments and Clone files from the test environment into other dev environments.
 
   ```json
     {  
@@ -34,8 +35,8 @@ Setting up this example is easy:
 	  "drulenium_org_project_uuid":"***"
 	}
   ```
-9. Add a Quicksilver operation to your `pantheon.yml` to fire the script after code sync.
-10. Test a code sync out!
+10. Add a Quicksilver operation to your `pantheon.yml` to fire the script after code sync.
+11. Test a code sync out!
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
 
