@@ -91,7 +91,7 @@ switch($_POST['wf_type']) {
       ),
       array(
         'title' => 'Commit Message',
-        'value' => $message,
+        'value' => rtrim($message),
         'short' => 'false'
       )
     );
