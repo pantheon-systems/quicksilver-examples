@@ -83,7 +83,7 @@ switch($_POST['wf_type']) {
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
-    $fields += array(
+    $fields = array_merge($fields, array(
       array(
         'title' => 'Commit',
         'value' => rtrim($hash),
@@ -94,7 +94,7 @@ switch($_POST['wf_type']) {
         'value' => rtrim($message),
         'short' => 'false'
       )
-    );
+    ));
     break;
 
   default:
