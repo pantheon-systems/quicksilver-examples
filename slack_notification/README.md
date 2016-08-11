@@ -16,6 +16,7 @@ This script shows how easy it is to integrate Slack notifications from your Pant
     sftp> mkdir private
     sftp> cd private
     sftp> put secrets.json
+    sftp> quit
   ```
 
 3. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control. Note this is a different `private` directory than where the secrets.json is stored. 
@@ -32,15 +33,25 @@ Here's an example of what your `pantheon.yml` would look like if this were the o
 api_version: 1
 
 workflows:
+  deploy_product:
+    after:
+        - type: webphp
+          description: Post to Slack after site creation
+          script: private/scripts/slack_notification.php
+  create_cloud_development_environment:
+    after: 
+        - type: webphp
+          description: Post to Slack after Multidev creation
+          script: private/scripts/slack_notification.php
   deploy:
     after:
         - type: webphp
-          description: Post to Slack on deploy
+          description: Post to Slack after deploy
           script: private/scripts/slack_notification.php
   sync_code:
     after:
         - type: webphp
-          description: Post to Slack on sync code
+          description: Post to Slack after code commit
           script: private/scripts/slack_notification.php
   clear_cache:
     after:
