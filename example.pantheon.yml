@@ -1,20 +1,52 @@
 ---
 api_version: 1
 
+# PHP Version: 
+# https://pantheon.io/docs/pantheon-yml#php-version
+# Set site's PHP version to 7.0
+php_version: 7.0
+
+# Protected Web Paths
+# https://pantheon.io/docs/pantheon-yml#protected-web-paths
+protected_web_paths:
+   - /example.txt
+   - /example_directory
+
+
+# Nested Docroot
+# https://pantheon.io/docs/pantheon-yml#nested-docroot
+web_docroot: true
+
+# Quicksilver Platform Integration Hooks
+# https://pantheon.io/docs/pantheon-yml#quicksilver
 workflows:
   
-  # Commits: Notify team of new commit to master (dev)
+  # Site Creation
+  deploy_product:
+    after:
+      - type: webphp
+        description: Post to Slack after site creation
+        script: private/scripts/slack_after_site_creation.php
+        
+  # Multidev Creation
+  create_cloud_development_environment:
+    after:
+      - type: webphp
+        description: Post to Slack after Multidev creation
+        script: private/scripts/slack_after_multidev_creation.php
+        
+  # Commits
   sync_code:
     after:
       - type: webphp
-        description: post to slack after each code pushed
+        description: Post to Slack after each code pushed
         script: private/scripts/slack_after_code_push.php
 
-  # Database Clones: Notify, sanitize, generate content, and notify on db clone
+  # Database Clones
   clone_database:
     before:
       - type: webphp
-        description: post to slack before cloning the database
+        description: Post to Slack before cloning the database
         script: private/scripts/slack_before_db_clone.php
     after:
       - type: webphp
@@ -24,19 +56,19 @@ workflows:
         description: generate development article content after the database clones 
         script: private/scripts/generate_dev_content.php
       - type: webphp
-        description: post to slack after the database clones
+        description: Post to Slack after the database clones
         script: private/scripts/slack_after_db_clone.php
   
-  # Code Deploys: Notify, Sanitize (if on test), post to new relic, update db, and notify completion
+  # Code Deploys: Notify, Sanitize (if on test), Post to new relic, update db, and notify completion
   deploy:
     before:
       - type: webphp
-        description: post to slack before cloning the database
+        description: Post to Slack before cloning the database
         script: private/scripts/slack_before_deploy.php
     after:
       - type: webphp
-        description: post to new relic always
-        script: private/scripts/post_new_relic.php
+        description: Post to new relic always
+        script: private/scripts/Post_new_relic.php
       - type: webphp
         description: sanitize the db after deploy to test
         script: private/scripts/sanitize_after_db_clone.php
@@ -50,12 +82,12 @@ workflows:
         description: do a visual regression test with Backtrac.io
         script: private/scripts/backtrac_visualregression.php
       - type: webphp
-        description: post to slack after each deploy
+        description: Post to Slack after each deploy
         script: private/scripts/slack_after_deploy.php
 
-  # Cache Clears: Post to slack after clearing cache
+  # Cache Clears: Post to Slack after clearing cache
   clear_cache:
     after:
       - type: webphp
-        description: post to slack after cache clear
+        description: Post to Slack after cache clear
         script: private/scripts/slack_after_clear_cache.php
