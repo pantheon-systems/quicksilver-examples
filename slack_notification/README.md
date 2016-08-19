@@ -1,11 +1,11 @@
 # Slack Integration #
 
-This script shows how easy it is to integrate Slack notifications from your Pantheon project using Quicksilver. As a bonus, we also show you how to manage API keys outside of your site repository.
+Hook into platform workflows and post notifications to Slack.
 
 ## Instructions ##
 
 1. [Enable Incoming Webhooks](https://my.slack.com/services/new/incoming-webhook/) for your Slack instance.
-2. Copy the secret Webhook URL into a file called `secrets.json` and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of every environment where you want to trigger Slack notifications.
+2. Copy the secret Webhook URL into a file called `secrets.json` and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of each environment where you want to trigger Slack notifications. The secret WebHook URL is like a password, which should not be stored in version control.
 
   ```shell
     $> echo '{"slack_url": "https://hooks.slack.com/services/MY/SECRET/URL"}' > secrets.json
@@ -19,9 +19,9 @@ This script shows how easy it is to integrate Slack notifications from your Pant
     sftp> quit
   ```
 
-3. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control. Note this is a different `private` directory than where the secrets.json is stored. 
+3. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control. Note this is a different `private` directory than where the `secrets.json` is stored. 
 4. Add Quicksilver operations to your `pantheon.yml`
-5. Test a deploy out!
+5. Test a deploy out and see the notification in the **#quicksilver** channel. If you'd like to post to a different channel, just change the value in `slack_notification.php`.
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback. You may also want to customize your notifications further. The [Slack API](https://api.slack.com/incoming-webhooks) documentation has more on your options.
 
