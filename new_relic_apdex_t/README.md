@@ -22,7 +22,6 @@ To use this example:
 3. Modify the variables at the top of the file to be the threshold T values you want for your site.
 
 ```php
-
 /**
  * CHANGE THESE VARIABLES FOR YOUR OWN SITE.
  */
@@ -35,7 +34,6 @@ $enable_real_user_monitoring = TRUE;
 // The "t" value (number of seconds) for browser apdex. (The "real user
 // monitoring turned off or on with $enable_real_user_monitoring")
 $end_user_apdex_threshold = 6;
-
 
 ```
 
