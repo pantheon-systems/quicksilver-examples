@@ -11,32 +11,22 @@ We recommend that any team working on a site discuss expectations for server-sid
 
 This Quicksilver example shows how you can set custom T values for Multidev environments when they are created. Otherwise each environment will use the default values of 0.5 and 7 for server and browser respectively.
 
-To do the actual setting of default values this script first gets an API key and then uses that key to interact with New Relic's REST API to set a T values. The main section of code you need to worry about though is just the variables at the top of the file.
+To do the actual setting of default values this script first gets an API key and then uses that key to interact with New Relic's REST API to set a T values based on the existing values from the dev (or test/live) environment.
 
 ## Instructions ##
 
 To use this example:
 
 1. [Activate New Relic Pro](https://pantheon.io/docs/new-relic/#activate-new-relic-pro) within your site dashboard. 
-2. Add the example `new_relic_apdex_t.php` script to the `private` directory of your code repository.
-3. Modify the variables at the top of the file to be the threshold T values you want for your site.
+2. Add the example `new_relic_apdex_t.php` script to the `private/scripts` directory of your code repository.
+3. Optionally, modify the environment to pull existing threshold T values from at the top of the file. This defaults to `dev` but can also be `test` or `live`.
 
 ```php
-/**
- * CHANGE THESE VARIABLES FOR YOUR OWN SITE.
- */
-// The "t" value (number of seconds) for your server-side apdex.
-// https://docs.newrelic.com/docs/apm/new-relic-apm/apdex/apdex-measuring-user-satisfaction
-$app_apdex_threshold = 0.4;
-// Do you want New Relic to add JavaScript to pages to analyze rendering time?
-// https://newrelic.com/browser-monitoring
-$enable_real_user_monitoring = TRUE;
-// The "t" value (number of seconds) for browser apdex. (The "real user
-// monitoring turned off or on with $enable_real_user_monitoring")
-$end_user_apdex_threshold = 6;
+// get New Relic info from the dev environment
+// Change to test or live as you wish
+$app_info = get_app_info( 'dev' );
 
 ```
-
 
 4. Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy. (One gotcha is that this script cannot be the first or only script called as part of Multidev creation. Before the New Relic API recognizes the the Multidev environment, that environment needs to have received at least one previous request.) 
 
