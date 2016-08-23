@@ -25,14 +25,16 @@ set_thresholds( $app_apdex_threshold, $end_user_apdex_threshold, $enable_real_us
 
 /**
  * Gets the New Relic API Key so that further requests can be made.
+ *
+ * Also gets New Relic's name for the given environment.
  */
-function get_nr_connection_info() {
+function get_nr_connection_info( $env = 'dev' ) {
   $output = array();
   $req    = pantheon_curl( 'https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', null, 8443 );
   $meta   = json_decode( $req['body'], true );
 
   foreach ( $meta as $data ) {
-    if ( $data['environment'] === PANTHEON_ENVIRONMENT ) {
+    if ( $data['environment'] === $env ) {
       if ( empty( $data['api_key'] ) ) {
         echo "Failed to get API Key\n";
 
@@ -78,9 +80,9 @@ function get_app_id( $api_key, $app_name ) {
 
 /**
  * Get New Relic information about a given environment.
- * 
+ *
  * Used to retrive T values for a pre-existing environment.
- */ 
+ */
 function get_app_info( $env = 'dev' ) {
   $nr_connection_info = get_nr_connection_info();
   if ( empty( $nr_connection_info ) ) {
@@ -122,7 +124,7 @@ function get_app_info( $env = 'dev' ) {
  */
 function set_thresholds( $app_apdex_threshold, $end_user_apdex_threshold, $enable_real_user_monitoring ) {
 
-  $nr_connection_info = get_nr_connection_info();
+  $nr_connection_info = get_nr_connection_info( PANTHEON_ENVIRONMENT );
   if ( empty( $nr_connection_info ) ) {
     echo "Unable to get New Relic connection info\n";
 
