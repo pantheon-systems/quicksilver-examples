@@ -76,6 +76,11 @@ function get_app_id( $api_key, $app_name ) {
   return $return;
 }
 
+/**
+ * Get New Relic information about a given environment.
+ * 
+ * Used to retrive T values for a pre-existing environment.
+ */ 
 function get_app_info( $env = 'dev' ) {
   $nr_connection_info = get_nr_connection_info();
   if ( empty( $nr_connection_info ) ) {
