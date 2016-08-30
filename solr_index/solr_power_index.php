@@ -1,4 +1,8 @@
 <?php
+// Post Solr schema
+echo "Posting Solr Schema File...\n";
+passthru('wp solr repost-schema');
+
 // Get Solr Server Info
 echo "Getting Solr Server Info...\n";
 passthru('wp solr info');
