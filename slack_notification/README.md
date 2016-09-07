@@ -19,7 +19,7 @@ This script shows how easy it is to integrate Slack notifications from your Pant
     sftp> quit
   ```
 
-3. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control. Note this is a different `private` directory than where the secrets.json is stored. 
+3. Add, and update as needed, the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control. Note this is a different `private` directory than where the secrets.json is stored.
 4. Add Quicksilver operations to your `pantheon.yml`
 5. Test a deploy out!
 
