@@ -3,7 +3,7 @@
 // Important constants :)
 $pantheon_yellow = '#EFD01B';
 
-// Default values for parameters
+// Default values for parameters - Be sure to update the channel to an active channel in your Slack!
 $defaults = array(
   'slack_channel' => '#quicksilver',
   'slack_username' => 'Pantheon-Quicksilver',
