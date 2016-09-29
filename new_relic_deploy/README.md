@@ -22,12 +22,25 @@ Optionally, you may want to use the `terminus workflows watch` command to get im
 Here's an example of what your `pantheon.yml` would look like if this were the only Quicksilver operation you wanted to use:
 
 ```yaml
+# Always need to specify the pantheon.yml API version.
 api_version: 1
 
+# You might also want some of the following here:
+# php_version: 7.0
+# drush_version: 8
+
 workflows:
+  # Log to New Relic when deploying to test or live.
   deploy:
     after:
       - type: webphp
         description: Log to New Relic
         script: private/scripts/new_relic_deploy.php
+  # Also log sync_code so you can track new code going into dev/multidev.
+  sync_code:
+    after:
+      - type: webphp
+        description: Log to New Relic
+        script: private/scripts/new_relic_deploy.php
+
 ```
