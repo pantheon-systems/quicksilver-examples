@@ -1,4 +1,11 @@
 <?php
+// No need to log this script operation in New Relic's stats.
+// PROTIP: you might also want to use this snippit if you have PHP code handling
+// very fast things like redirects or the like.
+if (extension_loaded('newrelic')) {
+  newrelic_ignore_transaction();
+}
+
 // Fetch metadata from Pantheon's internal API.
 $req = pantheon_curl('https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', NULL, 8443);
 $meta = json_decode($req['body'], true);
