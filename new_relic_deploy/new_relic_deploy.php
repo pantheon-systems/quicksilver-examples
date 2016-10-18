@@ -1,6 +1,6 @@
 <?php
 // No need to log this script operation in New Relic's stats.
-// PROTIP: you might also want to use this snippit if you have PHP code handling
+// PROTIP: you might also want to use this snippet if you have PHP code handling
 // very fast things like redirects or the like.
 if (extension_loaded('newrelic')) {
   newrelic_ignore_transaction();
