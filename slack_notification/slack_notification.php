@@ -3,9 +3,10 @@
 // Important constants :)
 $pantheon_yellow = '#EFD01B';
 
-// Default values for parameters - Be sure to update the channel to an active channel in your Slack!
+// Default values for parameters - this will assume the channel you define the webhook for.
+// The full Slack Message API allows you to specify other channels and enhance the messagge further
+// if you like: https://api.slack.com/docs/messages/builder
 $defaults = array(
-  'slack_channel' => '#quicksilver',
   'slack_username' => 'Pantheon-Quicksilver',
   'always_show_text' => false,
 );
