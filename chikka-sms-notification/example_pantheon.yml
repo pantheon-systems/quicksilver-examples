@@ -1,0 +1,18 @@
+api_version: 1
+
+workflows:
+  deploy:
+    after:
+        - type: webphp
+          description: send sms on deploy
+          script: private/scripts/chikka_sms_notification.php
+  sync_code:
+    after:
+        - type: webphp
+          description: send sms on sync code
+          script: private/scripts/chikka_sms_notification.php
+  clear_cache:
+    after:
+        - type: webphp
+          description: send sms when clearing cache
+          script: private/scripts/chikka_sms_notification.php
