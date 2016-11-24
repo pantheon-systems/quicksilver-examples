@@ -1,12 +1,18 @@
 <?php
 
+// Run a Drush Site Audit in case someone made a boo boo on Deploy
+// @TODO: Duplicate to Hipchat
+ob_start();
+passthru('drush aa --strict=0'); // Run the drush command for site audit
+$site_audit_all = ob_get_contents();
+ob_end_clean();
+
 // Important constants :)
 $pantheon_yellow = '#EFD01B';
 
-// Default values for parameters - this will assume the channel you define the webhook for.
-// The full Slack Message API allows you to specify other channels and enhance the messagge further
-// if you like: https://api.slack.com/docs/messages/builder
+// Default values for parameters
 $defaults = array(
+  'slack_channel' => '#quicksilver',
   'slack_username' => 'Pantheon-Quicksilver',
   'always_show_text' => false,
 );
@@ -46,74 +52,24 @@ $fields = array(
   ),
 );
 
-// Customize the message based on the workflow type.  Note that slack_notification.php
-// must appear in your pantheon.yml for each workflow type you wish to send notifications on.
-switch($_POST['wf_type']) {
-  case 'deploy':
-    // Find out what tag we are on and get the annotation.
-    $deploy_tag = `git describe --tags`;
-    $deploy_message = $_POST['deploy_message'];
+// Set a Slack Attachments title
+$title = 'Post-Deploy Site Audit :helmet_with_white_cross:';
 
-    // Set a Slack Attachments title
-    $title = 'Deploying :rocket:';
-
-    // Prepare the slack payload as per:
-    // https://api.slack.com/incoming-webhooks
-    $text = 'Deploy to the '. $_ENV['PANTHEON_ENVIRONMENT'];
-    $text .= ' environment of '. $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
-    $text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
-    $text .= "\n\n*DEPLOY MESSAGE*: $deploy_message";
-    // Build an array of fields to be rendered with Slack Attachments as a table
-    // attachment-style formatting:
-    // https://api.slack.com/docs/attachments
-    $fields[] = array(
-      'title' => 'Deploy Message',
-      'value' => $text,
-      'short' => 'false'
-    );
-    break;
-
-  case 'sync_code':
-    // Get the committer, hash, and message for the most recent commit.
-    $committer = `git log -1 --pretty=%cn`;
-    $email = `git log -1 --pretty=%ce`;
-    $message = `git log -1 --pretty=%B`;
-    $hash = `git log -1 --pretty=%h`;
-
-    // Set a Slack Attachments title
-    $title = 'Syncing code :fax:';
-
-    // Prepare the slack payload as per:
-    // https://api.slack.com/incoming-webhooks
-    $text = 'Code sync to the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . ' by ' . $_POST['user_email'] . "!\n";
-    $text .= 'Most recent commit: ' . rtrim($hash) . ' by ' . rtrim($committer) . ': ' . $message;
-    // Build an array of fields to be rendered with Slack Attachments as a table
-    // attachment-style formatting:
-    // https://api.slack.com/docs/attachments
-    $fields += array(
-      array(
-        'title' => 'Commit',
-        'value' => rtrim($hash),
-        'short' => 'true'
-      ),
-      array(
-        'title' => 'Commit Message',
-        'value' => $message,
-        'short' => 'false'
-      )
-    );
-    break;
-
-  default:
-    $text = $_POST['qs_description'];
-    break;
-}
+// Prepare the slack payload as per:
+// https://api.slack.com/incoming-webhooks
+$text = 'Site Audit Report after deployment to the *'. $_ENV['PANTHEON_ENVIRONMENT'];
+$text .= ' environment of '. $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
+$text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
+$text .= "\n\n*SITE AUDIT REPORT*: \n\n$site_audit_all";
+// No need to render Site Audit All as a slack attachment,
+// full report is cut off due to character limit
 
 $attachment = array(
   'fallback' => $text,
   'title' => $title,
   'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
-  'fields' => $fields
+  'fields' => $fields,
+  'text' => $site_audit_all
 );
 
 _slack_notification($secrets['slack_url'], $secrets['slack_channel'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
