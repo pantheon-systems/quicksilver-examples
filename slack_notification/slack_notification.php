@@ -46,6 +46,10 @@ $fields = array(
   ),
 );
 
+// Define Attachment array first so pretext can be added to it for each case
+$attachment = array(
+	'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
+);
 // Customize the message based on the workflow type.  Note that slack_notification.php
 // must appear in your pantheon.yml for each workflow type you wish to send notifications on.
 switch($_POST['wf_type']) {
@@ -68,6 +72,7 @@ switch($_POST['wf_type']) {
       'value' => $text,
       'short' => 'false'
     );
+    $attachment += array('pretext' => 'Deployment complete :rocket:');
     break;
 
   case 'sync_code':
@@ -84,18 +89,35 @@ switch($_POST['wf_type']) {
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
-    $fields += array(
-      array(
-        'title' => 'Commit',
-        'value' => rtrim($hash),
-        'short' => 'true'
-      ),
-      array(
-        'title' => 'Commit Message',
-        'value' => $message,
-        'short' => 'false'
-      )
+    $fields[] = array(
+      'title' => 'Commit',
+      'value' => rtrim($hash),
+      'short' => 'true'
     );
+    $fields[] = array(
+      'title' => 'Commit Message',
+      'value' => $message,
+      'short' => 'false'
+    );
+    $attachment += array('pretext' => 'Code syncing');
+    break;
+
+  case 'create_cloud_development_environment':
+    // Prepare the slack payload as per:
+    // https://api.slack.com/incoming-webhooks
+    $text = $_ENV['PANTHEON_ENVIRONMENT'] . ' spinning up for';
+    $text .= $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
+    $text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
+    $attachment += array('pretext' => 'New environment created');
+    break;
+
+  case 'cache_clear':
+    // Prepare the slack payload as per:
+    // https://api.slack.com/incoming-webhooks
+    $text = 'Cache clear for '. $_ENV['PANTHEON_ENVIRONMENT'] . ' on ';
+    $text .= $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
+    $text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
+    $attachment += array('pretext' => 'Caches cleared');
     break;
 
   default:
@@ -103,12 +125,18 @@ switch($_POST['wf_type']) {
     break;
 }
 
-$attachment = array(
+// Add the prepared $text and $fields arrays
+$attachment += array(
   'fallback' => $text,
-  'pretext' => 'Deploying :rocket:',
-  'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
   'fields' => $fields
 );
+
+// Add pretext default if not already defined
+if (empty($attachment->pretext)) {
+  $attachment += array(
+    'pretext' => 'Pantheon system update :rocket:'
+  );
+}
 
 _slack_notification($secrets['slack_url'], $secrets['slack_channel'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
 
@@ -143,10 +171,18 @@ function _get_secrets($requiredKeys, $defaults)
 function _slack_notification($slack_url, $channel, $username, $text, $attachment, $alwaysShowText = false)
 {
   $attachment['fallback'] = $text;
-  $post = array(
-    'username' => $username,
+  if (substr($channel,1) == '#') {
+    // Post with the $username
+    $post = array(
+      'username' => $username
+    );
+  } else {
+    // Do not post with the username for private channels
+    $post = array();
+  }
+  $post += array(
     'channel' => $channel,
-    'icon_emoji' => ':lightning_cloud:',
+    'icon_emoji' => ':pantheon:',
     'attachments' => array($attachment)
   );
   if ($alwaysShowText) {
