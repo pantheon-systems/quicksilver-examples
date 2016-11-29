@@ -182,7 +182,7 @@ function _slack_notification($slack_url, $channel, $username, $text, $attachment
   }
   $post += array(
     'channel' => $channel,
-    'icon_emoji' => ':pantheon:',
+    'icon_emoji' => ':lightning_cloud:',
     'attachments' => array($attachment)
   );
   if ($alwaysShowText) {
