@@ -59,15 +59,19 @@ switch($_POST['wf_type']) {
     $text = 'Deploy to the '. $_ENV['PANTHEON_ENVIRONMENT'];
     $text .= ' environment of '. $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
     $text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
-    $text .= "\n\n*DEPLOY MESSAGE*: $deploy_message";
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
     $fields[] = array(
-      'title' => 'Deploy Message',
+      'title' => 'Details',
       'value' => $text,
       'short' => 'false'
     );
+    $fields[] = array(
+      'title' => 'Deploy Note',
+      'value' => $deploy_message,
+      'short' => 'false'
+    );  
     break;
 
   case 'sync_code':
@@ -98,6 +102,14 @@ switch($_POST['wf_type']) {
     );
     break;
 
+  case 'clear_cache':
+    $fields[] = array(
+      'title' => 'Cleared caches',
+      'value' => 'Cleared caches on the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . "!\n",
+      'short' => 'false'
+    );
+    break;
+
   default:
     $text = $_POST['qs_description'];
     break;
@@ -105,7 +117,7 @@ switch($_POST['wf_type']) {
 
 $attachment = array(
   'fallback' => $text,
-  'pretext' => 'Deploying :rocket:',
+  'pretext' => ($_POST['wf_type'] == 'clear_cache') ? 'Caches cleared :construction:' : 'Deploying :rocket:',
   'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
   'fields' => $fields
 );
