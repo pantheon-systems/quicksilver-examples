@@ -76,6 +76,10 @@ $ terminus help workflows
 
 The `list` and `show` commands will allow you to explore previous workflows and their Quicksilver operations. The `watch` command is a developers best friend: it will set up Terminus to automatically "follow" the workflow activity of your site, dumping back any Quicksilver output along with them.
 
+## Environment variables ##
+
+To discover what environment variables are available to your scripts then take a look at the [debugging_example](debugging_example) script and instructions.
+
 ## Troubleshooting ##
 
 - `pantheon.yml` and `private` go in your site root, ie. your ~/code directory
