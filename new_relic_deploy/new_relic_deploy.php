@@ -38,7 +38,7 @@ if ($_POST['wf_type'] == 'sync_code') {
     // This indicates an in-dashboard SFTP commit.
     $user = trim(`git log --pretty=format:"%ae" -1`);
     $changelog = trim(`git log --pretty=format:"%b" -1`);
-    $changelog .= "\n\n" . '(Commit made via Pantheon dashbaord.)';
+    $changelog .= "\n\n" . '(Commit made via Pantheon dashboard.)';
   }
   else {
     $user = $_POST['user_email'];
