@@ -5,11 +5,11 @@
 $secrets = _get_secrets('secrets.json');
 
 //Create curl post request to hit the Jenkins webhook
-$curl = curl_init($secrets->jenkins_url);
+$curl = curl_init($secrets['jenkins_url']);
 
 //Setup header with authentication
 curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
-    'Authorization: Basic '. base64_encode("$secrets->username:$secrets->api_token"),
+    'Authorization: Basic '. base64_encode($secrets['username'] . ":" . $secrets['api_token']),
 ));
 
 //Declare request as a post and setup the fields
