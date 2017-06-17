@@ -123,7 +123,7 @@ $attachment = array(
   'fields' => $fields
 );
 
-_slack_notification($secrets['slack_url'], $text, $attachment);
+_slack_notification($secrets['slack_url'], $secrets['slack_username'], $text, $attachment);
 
 
 /**
@@ -153,10 +153,11 @@ function _get_secrets($requiredKeys, $defaults)
 /**
  * Send a notification to slack
  */
-function _slack_notification($slack_url, $text, $attachment, $alwaysShowText = false)
+function _slack_notification($slack_url, $username, $text, $attachment, $alwaysShowText = false)
 {
   $attachment['fallback'] = $text;
   $post = array(
+    'username' => $username,
     'icon_emoji' => ':lightning_cloud:',
     'attachments' => array($attachment)
   );
