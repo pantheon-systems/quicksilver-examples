@@ -15,8 +15,7 @@ $secrets = _get_secrets(array('tracker_token'), array());
 $current_commithash = shell_exec('git rev-parse HEAD');
 $last_commithash = FALSE;
 // Retrieve the last commit processed by this script
-$commit_file = "../{$env}_jira_integration_commit.txt";
-//$commit_file = $_SERVER['HOME'] . "/files/private/{$env}_jira_integration_commit.txt";
+$commit_file = $_SERVER['HOME'] . "/files/private/{$env}_pivotal_integration_commit.txt";
 if (file_exists($commit_file)) {
   $last_processed_commithash = trim(file_get_contents($commit_file));
   // We should (almost) always find our last commit still in the repository;
@@ -33,7 +32,7 @@ file_put_contents($commit_file, $current_commithash, LOCK_EX);
 // Retrieve git log for commits after last processed, to current
 $commits = _get_commits($current_commithash, $last_commithash, $env);
 // Check each commit message for Jira ticket numbers
-foreach ($commits['jira'] as $ticket_id => $commit_ids) {
+foreach ($commits['pivotal'] as $ticket_id => $commit_ids) {
   foreach ($commit_ids as $commit_id) {
     send_commit($secrets, $commits['history'][$commit_id]);
   }
@@ -48,11 +47,11 @@ function _get_commits($current_commithash, $last_commithash, $env) {
   $commits = array(
     // Raw output of git log since the last processed
     'history_raw' => NULL,
-    // Formatted array of commits being sent to jira
+    // Formatted array of commits being sent to pivotal
     'history' => array(),
-    // An array keyed by jira ticket id, each holding an
+    // An array keyed by pivotal ticket id, each holding an
     // array of commit ids.
-    'jira' => array()
+    'pivotal' => array()
   );
     //builds command
   $cmd = 'git log'; // add -p to include diff
@@ -78,14 +77,14 @@ function _get_commits($current_commithash, $last_commithash, $env) {
     // Expected pattern: "PROJECT-ID: comment".
     preg_match('/^\[#([0-9]{1,16})\]/', $commit['message'], $matches);
     if (count($matches) > 0) {
-      // Build the $commits['jira'] array so there is
+      // Build the $commits['pivotal'] array so there is
       // only 1 item per ticket id
       foreach ($matches as $ticket_id) {
-        if (!isset($commits['jira'][$ticket_id])) {
-          $commits['jira'][$ticket_id] = array();
+        if (!isset($commits['pivotal'][$ticket_id])) {
+          $commits['pivotal'][$ticket_id] = array();
         }
         // ... and only 1 item per commit id
-        $commits['jira'][$ticket_id][$commit['id']] = $commit['id'];
+        $commits['pivotal'][$ticket_id][$commit['id']] = $commit['id'];
       }
       // Add the commit to the history array since there was a match.
       $commits['history'][$commit['id']] = $commit;
@@ -99,6 +98,7 @@ function _get_commits($current_commithash, $last_commithash, $env) {
  */
 function send_commit($secrets, $commit) {
     print("\n==== Posting to Pivotal Tracker ====\n");
+
     // Sends commit to pivotal.
     $ch = 'curl -X POST -H "X-TrackerToken: '. $secrets['tracker_token'] . '" -H "Content-Type: application/json" -d \'{"source_commit":{"commit_id":"' . substr($commit['id'], 0, 10) . '","message":"' . $commit['formatted'] . '"}\' "https://www.pivotaltracker.com/services/v5/source_commits?fields=%3Adefault%2Ccomments"';
 
@@ -120,8 +120,7 @@ function HandleHeaderLine( $curl, $header_line ) {
  */
 function _get_secrets($requiredKeys, $defaults)
 {
-  $secretsFile = './secrets.json';
-    //$secretsFile = $_SERVER['HOME'] . '/files/private/secrets.json';
+  $secretsFile = $_SERVER['HOME'] . '/files/private/secrets.json';
   if (!file_exists($secretsFile)) {
     die('No secrets file found. Aborting!');
   }
