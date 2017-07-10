@@ -54,6 +54,6 @@ workflows:
   sync_code:
     after:
       - type: webphp
-        description: Jira Integration
+        description: Pivotal Integration
         script: private/pivotal_integration.php
 ```
