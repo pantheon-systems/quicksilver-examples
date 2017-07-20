@@ -78,12 +78,13 @@ function _get_commits($current_commithash, $last_commithash, $env) {
     ' . $commit['message'] . '
     ~' . $lines[1] . ' - ' . $lines[2];
     // Look for matches on a Trello card ID format
-    // = 8 characters
-    preg_match('/[a-zA-Z0-9]{8}/', $commit['message'], $matches);
+    // = [8 characters]
+    preg_match('/\[[a-zA-Z0-9]{8}\]/', $commit['message'], $matches);
     if (count($matches) > 0) {
       // Build the $commits['trello'] array so there is
       // only 1 item per ticket id
-      foreach ($matches as $card_id) {
+      foreach ($matches as $card_id_enc) {
+        $card_id = substr($card_id_enc, 1, -1);
         if (!isset($commits['trello'][$card_id])) {
           $commits['trello'][$card_id] = array();
         }

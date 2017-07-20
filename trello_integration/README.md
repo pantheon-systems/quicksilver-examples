@@ -4,7 +4,7 @@ This example parses commit messages for Trello card IDs and adds the commit mess
 
 Example comments:
 
-  s3yxNR5v: Adjust layout spacing
+  [s3yxNR5v]: Adjust layout spacing
 
 Commits that contain multiple Trello cards will post comments to each issue mentioned. A comment will be added each time a commit is pushed to any dev or multidev branch; each Trello comment is labeled with the appropriate commit hash and Pantheon environment that triggered the post.
 
