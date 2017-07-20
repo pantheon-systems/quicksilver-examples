@@ -1,6 +1,6 @@
 # Trello Integration #
 
-This example parses commit messages for Trello card IDs and adds the commit message as a comment in the related Jira issue.
+This example parses commit messages for Trello card IDs and adds the commit message as a comment in the related Trello card.
 
 Example comments:
 
