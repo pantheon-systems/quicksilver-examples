@@ -4,11 +4,6 @@
 // a commit appears on a new branch on Pantheon.
 $env = $_ENV['PANTHEON_ENVIRONMENT'];
 
-// Do not watch test or live, though.
-if (($env == 'live') || ($env == 'test')) {
-  exit(0);
-}
-
 // Look up the secrets from the secrets file.
 $secrets = _get_secrets(array('trello_key', 'trello_token'), array());
 
