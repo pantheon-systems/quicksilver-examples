@@ -28,7 +28,7 @@ Just copy it to `wp-config/mu-plugins`.
    
 ### Creating a WP-CFM configuration file
 
-This should be straight forward, but you need to know which _wp_options_ values you should track.  If you don't know, one way to
+This should be straight forward, but you need to know which `wp_options` values you should track.  If you don't know, one way to
 find out is this:
 
 1. Put your site into sftp mode.
@@ -43,10 +43,8 @@ find out is this:
 
 ### Automating loading the WP-CFM configuration file
 
-You can have as many or as few configurations as you like.  In `wp_cfm_after_clone.php` change the values in `$config_map` to
-set the mapping between environments and filenames.  Follow the instructions in the comments.
-
-Now we just need to configure our pantheon.yml to actually do the import, triggered after the `db_clone` workflow:
+You can have as many or as few configurations as you like.
+Now we just need to configure our pantheon.yml to actually do the import, triggered after the `db_clone` and `deploy` workflows:
 
 ```
 ---
@@ -58,6 +56,12 @@ workflows:
   clone_database:
     after:
       - type: webphp
-        description: Pull environment specific config using wp-cfm after cloning db
+        description: Import configuration with WP-CFM after cloning a database
+        script: private/scripts/wp_cfm_after_clone.php
+
+  deploy:
+    after:
+      - type: webphp
+        description: Import configuration with WP-CFM after deployment
         script: private/scripts/wp_cfm_after_clone.php
 ```
