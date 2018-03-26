@@ -52,7 +52,11 @@ elseif ($_POST['wf_type'] == 'deploy') {
   // Find out if there's a deploy tag:
   $revision = `git describe --tags`;
   // Get the annotation:
-  $changelog = `git tag -l -n99 $deploy_tag`;
+  if (!empty($deploy_tag)) {
+    $changelog = `git tag -l -n99 $deploy_tag`;
+  } else {
+    $changelog = `git tag -l -n99`;
+  }
   $user = $_POST['user_email'];
 }
 
