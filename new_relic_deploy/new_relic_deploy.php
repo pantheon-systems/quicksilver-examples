@@ -50,7 +50,7 @@ elseif ($_POST['wf_type'] == 'deploy') {
   // Topline description:
   $description = 'Deploy to environment triggered via Pantheon';
   // Find out if there's a deploy tag:
-  $revision = `git describe --tags`;
+  $revision = `git describe --tags --abbrev=0`;
   // Get the annotation:
   $changelog = `git tag -l -n99 $revision`;
   $user = $_POST['user_email'];
