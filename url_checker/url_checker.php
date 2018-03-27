@@ -83,7 +83,7 @@ function url_checker_build_output($results, $failed) {
   foreach ($results as $item) {
     $output .= '  ' . $item['status'] . ' - ' . $item['url'] . "\n";
   }
-  $output .= "--------\n" . count($failed) . " failed\n\n";
+  $output .= "--------\n" . $failed . " failed\n\n";
   return $output;
 }
 
