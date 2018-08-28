@@ -4,13 +4,6 @@
 // automatic visual regression testing using diffy.website
 define("SITE_URL", "https://diffy.website");
 
-// Provide the login and password for the project on diffy.website
-define('USERNAME', 'add-login-here');
-define('PASSWORD', 'add-password-here');
-
-// Provide the Project ID for the project on diffy.website
-define('PROJECT_ID', 'add-project-id-here');
-
 if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT == 'test')) {
     $diffy = new DiffyVisualregression();
     $diffy->run();
@@ -21,11 +14,17 @@ class DiffyVisualregression {
   private $token;
   private $error;
   private $processMsg = '';
+  private $secrets;
 
   public function run()
   {
-      echo 'Starting a visual regresison test between the live and test environments...' . '\n';
-      $isLoggedIn = $this->login(USERNAME, PASSWORD);
+
+      // Load our hidden credentials.
+      // See the README.md for instructions on storing secrets.
+      $this->secrets = $this->get_secrets(['username', 'password', 'project_id']);
+
+      echo 'Starting a visual regression test between the live and test environments...' . '\n';
+      $isLoggedIn = $this->login($this->secrets['username'], $this->secrets['password']);
       if (!$isLoggedIn) {
           echo $this->error;
           return;
@@ -46,7 +45,7 @@ class DiffyVisualregression {
       $curl = curl_init();
       $authorization = 'Authorization: Bearer ' . $this->token;
       $curlOptions = array(
-        CURLOPT_URL => rtrim(SITE_URL, '/') . '/api/projects/' . PROJECT_ID . '/compare',
+        CURLOPT_URL => rtrim(SITE_URL, '/') . '/api/projects/' . $this->secrets['project_id'] . '/compare',
         CURLOPT_HTTPHEADER => array('Content-Type: application/json' , $authorization ),
         CURLOPT_POST => 1,
         CURLOPT_RETURNTRANSFER => 1,
@@ -127,4 +126,29 @@ class DiffyVisualregression {
       return $errorsString;
   }
 
+    /**
+     * Get secrets from secrets file.
+     *
+     * @param array $requiredKeys List of keys in secrets file that must exist.
+     */
+    private function get_secrets($requiredKeys)
+    {
+        $secretsFile = $_SERVER['HOME'].'/files/private/secrets.json';
+
+        if (!file_exists($secretsFile)) {
+            die('No secrets file found. Aborting!');
+        }
+        $secretsContents = file_get_contents($secretsFile);
+        $secrets = json_decode($secretsContents, 1);
+        if ($secrets == false) {
+            die('Could not parse json in secrets file. Aborting!');
+        }
+
+        $missing = array_diff($requiredKeys, array_keys($secrets));
+        if (!empty($missing)) {
+            die('Missing required keys in json secrets file: '.implode(',', $missing).'. Aborting!');
+        }
+
+        return $secrets;
+    }
 }
