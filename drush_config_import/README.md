@@ -13,7 +13,7 @@ Setting up this example is easy:
 3. Test a deploy out!
 4. Note that automating this step may not be appropriate for all sites. Sites on which configuration is edited in the live environment may not want to automatically switch to configuration stored in files. For more information, see https://www.drupal.org/documentation/administer/config
 
-Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
+Optionally, you may want to use the `terminus workflow:watch` command to get immediate debugging feedback.
 
 ### Example `pantheon.yml` ###
 
