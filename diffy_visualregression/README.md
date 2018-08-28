@@ -16,10 +16,10 @@ In order to get up and running, you first need to setup a Diffy.website project:
 Then you need to add the relevant code to your Pantheon project:
 
 1. Add the example `diffyVisualregression.php` script to the 'private/scripts/' directory of your code repository.
-2. Copy the secret login and password into a file called `secrets.json` and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory.
+2. Copy the secret username and password into a file called `secrets.json` and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory.
 
      ```shell
-       $> echo '{"login": "myLogin", "password": "myPassword", "project_id" : "123"}' > secrets.json
+       $> echo '{"username": "myLogin", "password": "myPassword", "project_id" : "123"}' > secrets.json
        sftp> cd files
        sftp> mkdir private
        sftp> cd private
