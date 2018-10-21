@@ -1,6 +1,6 @@
 <?php
 
-// An example of usign Pantheon's Quicksilver technology to do
+// An example of using Pantheon's Quicksilver technology to do
 // automatic visual regression testing using diffy.website
 define("SITE_URL", "https://diffy.website");
 
