@@ -9,9 +9,9 @@ if ($_ENV['PANTHEON_ENVIRONMENT'] != 'live') {
 
 // Retrieve Cloudflare config data
 $config_file = $_SERVER['HOME'] . '/files/private/cloudflare_cache.json';
-$config = json_decode(file_get_contents($_SERVER['HOME'] . '/files/private/cloudflare_cache.json'), 1);
+$config = json_decode(file_get_contents($config_file), 1);
 if ($config == FALSE) {
-  die('files/private/cloudflare_cache.json found. Aborting!');
+  die('files/private/cloudflare_cache.json not found. Aborting!');
 }
 
 purge_cache($config);
