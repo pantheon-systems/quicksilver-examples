@@ -42,7 +42,7 @@ switch($_POST['wf_type']) {
 
 
   $message = $text;
-  if ( sendSMS($number, $message, $secrets['chikka_accesscode'], $secrets['chikka_client_id'], $secrets['chikka_client_secret'], $secrets['chikka_url'] ) == TRUE) {
+  if ( sendSMS($number, $message, $secrets['chikka_accesscode'], $secrets['chikka_client_id'], $secrets['chikka_client_secret'], $secrets['chikka_url'] ) == true) {
     echo "Successfully sent SMS to $number";
   } else {
     echo "ERROR";
@@ -62,7 +62,7 @@ function _get_secrets($requiredKeys, $defaults)
   }
   $secretsContents = file_get_contents($secretsFile);
   $secrets = json_decode($secretsContents, 1);
-  if ($secrets == FALSE) {
+  if ($secrets == false) {
     die('Could not parse json in secrets file. Aborting!');
   }
   $secrets += $defaults;
@@ -87,9 +87,9 @@ function sendSMS($mobile_number, $message, $chikka_accesscode, $chikka_client_id
   $result = curl_request($chikka_url, $post);
   $result = json_decode($result, true);
   if ($result['status'] == '200') {
-    return TRUE;
+    return true;
   } else {
-    return FALSE;
+    return false;
   }
 }
 
@@ -110,9 +110,9 @@ function replySMS($mobile_number, $request_id, $message, $price = 'P2.50', $chik
   $result = curl_request($chikka_url, $post);
   $result = json_decode($result, true);
   if ($result['status'] == '200') {
-    return TRUE;
+    return true;
   } else {
-    return FALSE;
+    return false;
   }
 }
 
@@ -133,9 +133,9 @@ function replySMS2($mobile_number, $request_id, $message, $price = 'P2.50', $chi
   $result = curl_request($secrets['chikka_url'], $post);
   $result = json_decode($result, true);
   if ($result['status'] == '200') {
-    return TRUE;
+    return true;
   } else {
-    return FALSE;
+    return false;
   }
 }
 
@@ -151,7 +151,7 @@ function curl_request( $URL, $arr_post_body)
   curl_setopt($curl_handler, CURLOPT_URL, $URL);
   curl_setopt($curl_handler, CURLOPT_POST, count($arr_post_body));
   curl_setopt($curl_handler, CURLOPT_POSTFIELDS, $query_string);
-  curl_setopt($curl_handler, CURLOPT_RETURNTRANSFER, TRUE);
+  curl_setopt($curl_handler, CURLOPT_RETURNTRANSFER, true);
   $response = curl_exec($curl_handler);
 
   if(curl_errno($curl_handler))
