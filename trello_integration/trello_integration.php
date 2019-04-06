@@ -9,7 +9,7 @@ $secrets = _get_secrets(array('trello_key', 'trello_token'), array());
 
 // Get latest commit
 $current_commithash = shell_exec('git rev-parse HEAD');
-$last_commithash = FALSE;
+$last_commithash = false;
 // Retrieve the last commit processed by this script
 $commit_file = $_SERVER['HOME'] . "/files/private/{$env}_trello_integration_commit.txt";
 if (file_exists($commit_file)) {
@@ -43,7 +43,7 @@ foreach ($commits['trello'] as $card_id => $commit_ids) {
 function _get_commits($current_commithash, $last_commithash, $env) {
   $commits = array(
     // Raw output of git log since the last processed
-    'history_raw' => NULL,
+    'history_raw' => null,
     // Formatted array of commits being sent to Trello
     'history' => array(),
     // An array keyed by Trello card id, each holding an
@@ -128,7 +128,7 @@ function _get_secrets($requiredKeys, $defaults)
   }
   $secretsContents = file_get_contents($secretsFile);
   $secrets = json_decode($secretsContents, 1);
-  if ($secrets == FALSE) {
+  if ($secrets == false) {
     die('Could not parse json in secrets file. Aborting!');
   }
   $secrets += $defaults;

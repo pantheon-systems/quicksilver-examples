@@ -10,14 +10,14 @@ if ($_ENV['PANTHEON_ENVIRONMENT'] != 'live') {
 // Retrieve Cloudflare config data
 $config_file = $_SERVER['HOME'] . '/files/private/cloudflare_cache.json';
 $config = json_decode(file_get_contents($_SERVER['HOME'] . '/files/private/cloudflare_cache.json'), 1);
-if ($config == FALSE) {
+if ($config == false) {
   die('files/private/cloudflare_cache.json found. Aborting!');
 }
 
 purge_cache($config);
 
 function purge_cache($config) {
-  $payload = json_encode(array('purge_everything' => TRUE));
+  $payload = json_encode(array('purge_everything' => true));
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/zones/' . $config['zone_id'] . '/purge_cache');
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');

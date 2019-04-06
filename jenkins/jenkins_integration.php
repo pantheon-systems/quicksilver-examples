@@ -44,7 +44,7 @@ function _get_secrets($file)
   }
   $secrets_json = file_get_contents($secrets_file);
   $secrets = json_decode($secrets_json, 1);
-  if ($secrets == FALSE) {
+  if ($secrets == false) {
     die('Could not parse json in secrets file. Aborting!');
   }
   return $secrets;
