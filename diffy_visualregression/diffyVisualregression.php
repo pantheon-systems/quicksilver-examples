@@ -2,7 +2,7 @@
 
 // An example of using Pantheon's Quicksilver technology to do
 // automatic visual regression testing using diffy.website
-define("SITE_URL", "https://diffy.website");
+define("SITE_URL", "https://app.diffy.website");
 
 echo 'Checking if it is test environment deployment.' . PHP_EOL;
 if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT == 'test')) {
