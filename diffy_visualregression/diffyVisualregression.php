@@ -2,16 +2,21 @@
 
 // An example of using Pantheon's Quicksilver technology to do
 // automatic visual regression testing using diffy.website
-define("SITE_URL", "https://diffy.website");
+define("SITE_URL", "https://app.diffy.website");
 
+echo 'Checking if it is test environment deployment.' . PHP_EOL;
 if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT == 'test')) {
+    echo 'Stage deployment. Starting visual testing.' . PHP_EOL;
     $diffy = new DiffyVisualregression();
     $diffy->run();
+}
+else {
+    echo 'No it is not Test environment. Skipping visual testing.' . PHP_EOL;
 }
 
 class DiffyVisualregression {
 
-  private $token;
+  private $jwt;
   private $error;
   private $processMsg = '';
   private $secrets;
@@ -21,10 +26,10 @@ class DiffyVisualregression {
 
       // Load our hidden credentials.
       // See the README.md for instructions on storing secrets.
-      $this->secrets = $this->get_secrets(['username', 'password', 'project_id']);
+      $this->secrets = $this->get_secrets(['token', 'project_id']);
 
-      echo 'Starting a visual regression test between the live and test environments...' . '\n';
-      $isLoggedIn = $this->login($this->secrets['username'], $this->secrets['password']);
+      echo 'Starting a visual regression test between the live and test environments...' . PHP_EOL;
+      $isLoggedIn = $this->login($this->secrets['token']);
       if (!$isLoggedIn) {
           echo $this->error;
           return;
@@ -43,7 +48,7 @@ class DiffyVisualregression {
   private function compare()
   {
       $curl = curl_init();
-      $authorization = 'Authorization: Bearer ' . $this->token;
+      $authorization = 'Authorization: Bearer ' . $this->jwt;
       $curlOptions = array(
         CURLOPT_URL => rtrim(SITE_URL, '/') . '/api/projects/' . $this->secrets['project_id'] . '/compare',
         CURLOPT_HTTPHEADER => array('Content-Type: application/json' , $authorization ),
@@ -76,25 +81,25 @@ class DiffyVisualregression {
       if (strstr($curlResponse, 'diff: ')) {
           $diffId = (int) str_replace('diff: ', '', $curlResponse);
           if ($diffId) {
-              $this->processMsg .= 'Check out the result here: ' . rtrim(SITE_URL, '/') . '/ui#/diffs/' . $diffId . '\n';
+              $this->processMsg .= 'Check out the result here: ' . rtrim(SITE_URL, '/') . '/ui#/diffs/' . $diffId . PHP_EOL;
               return true;
           }
       } else {
-          $this->error = '-1:' . $curlResponse . '\n';
+          $this->error = '-1:' . $curlResponse . PHP_EOL;
           return false;
       }
   }
 
-  private function login($username, $password) {
+  private function login($token) {
     $curl = curl_init();
     $curlOptions = array(
-      CURLOPT_URL => rtrim(SITE_URL, '/') . '/api/login_check',
+      CURLOPT_URL => rtrim(SITE_URL, '/') . '/api/auth/key',
       CURLOPT_POST => 1,
       CURLOPT_RETURNTRANSFER => 1,
-      CURLOPT_POSTFIELDS => array(
-        '_username' => $username,
-        '_password' => $password
-      )
+      CURLOPT_HTTPHEADER => array('Content-Type: application/json'),
+      CURLOPT_POSTFIELDS => json_encode(array(
+        'key' => $token,
+      ))
     );
 
     curl_setopt_array($curl, $curlOptions);
@@ -104,16 +109,16 @@ class DiffyVisualregression {
     curl_close($curl);
 
     if ($curlErrorMsg) {
-        $this->error = $curlErrno . ': ' . $curlErrorMsg . '\n';
+        $this->error = $curlErrno . ': ' . $curlErrorMsg . PHP_EOL;
         return false;
     }
 
     if (isset($curlResponse->token)) {
-        $this->token = $curlResponse->token;
+        $this->jwt = $curlResponse->token;
         return true;
     } else {
-        $this->token = null;
-        $this->error = '401: '.$curlResponse->message."\n";
+        $this->jwt = null;
+        $this->error = '401: '.$curlResponse->message . PHP_EOL;
         return false;
     }
   }
@@ -121,34 +126,35 @@ class DiffyVisualregression {
   private function parseProjectErrors($errors) {
       $errorsString = '';
       foreach ($errors as $key => $error) {
-          $errorsString .= $key . ' => ' . $error . '\n';
+          $errorsString .= $key . ' => ' . $error . PHP_EOL;
       }
       return $errorsString;
   }
 
-    /**
-     * Get secrets from secrets file.
-     *
-     * @param array $requiredKeys List of keys in secrets file that must exist.
-     */
-    private function get_secrets($requiredKeys)
-    {
-        $secretsFile = $_SERVER['HOME'].'/files/private/secrets.json';
+  /**
+   * Get secrets from secrets file.
+   *
+   * @param array $requiredKeys List of keys in secrets file that must exist.
+   */
+  private function get_secrets($requiredKeys)
+  {
+      $secretsFile = $_SERVER['HOME'].'/files/private/secrets.json';
 
-        if (!file_exists($secretsFile)) {
-            die('No secrets file found. Aborting!');
-        }
-        $secretsContents = file_get_contents($secretsFile);
-        $secrets = json_decode($secretsContents, 1);
-        if ($secrets == false) {
-            die('Could not parse json in secrets file. Aborting!');
-        }
+      if (!file_exists($secretsFile)) {
+          die('No secrets file found. Aborting!');
+      }
+      $secretsContents = file_get_contents($secretsFile);
+      $secrets = json_decode($secretsContents, 1);
+      if ($secrets == false) {
+          die('Could not parse json in secrets file. Aborting!');
+      }
 
-        $missing = array_diff($requiredKeys, array_keys($secrets));
-        if (!empty($missing)) {
-            die('Missing required keys in json secrets file: '.implode(',', $missing).'. Aborting!');
-        }
+      $missing = array_diff($requiredKeys, array_keys($secrets));
+      if (!empty($missing)) {
+          die('Missing required keys in json secrets file: '.implode(',', $missing).'. Aborting!');
+      }
 
-        return $secrets;
-    }
+      return $secrets;
+  }
+
 }
