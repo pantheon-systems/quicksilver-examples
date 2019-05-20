@@ -10,16 +10,16 @@ For more advanced use cases, including doing visual regression against Multidev 
 
 In order to get up and running, you first need to setup a Diffy.website project:
 
-1. Either login to your account or register for a new one at [http://Diffy.website](http://Diffy.website).
-2. Setup a Diffy.website project for your site and define the Production and Staging URLs in the project settings.
+1. Either login to your account or register for a new one at [https://diffy.website](https://diffy.website).
+2. Setup a Diffy project for your site and define the Production and Staging URLs in the project settings.
 
 Then you need to add the relevant code to your Pantheon project:
 
 1. Add the example `diffyVisualregression.php` script to the 'private/scripts/' directory of your code repository.
-2. Copy the secret username, password and project_id into a file called `secrets.json` and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory.
+2. Create an API token in Diffy (). Copy the token and project_id into a file called `secrets.json` and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory.
 
      ```shell
-       $> echo '{"username": "myLogin", "password": "myPassword", "project_id" : "123"}' > secrets.json
+       $> echo '{"token": "yourToken", "project_id" : "123"}' > secrets.json
        sftp> cd files
        sftp> mkdir private
        sftp> cd private
