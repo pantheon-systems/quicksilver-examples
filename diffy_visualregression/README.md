@@ -8,6 +8,8 @@ For more advanced use cases, including doing visual regression against Multidev 
 
 ## Instructions ##
 
+Vide demo is available https://youtu.be/U8uHJELeTDE.
+
 In order to get up and running, you first need to setup a Diffy.website project:
 
 1. Either login to your account or register for a new one at [https://diffy.website](https://diffy.website).
@@ -20,6 +22,7 @@ Then you need to add the relevant code to your Pantheon project:
 
      ```shell
        $> echo '{"token": "yourToken", "project_id" : "123"}' > secrets.json
+       sftp YOURCREDENTIALS_TO_LIVE_ENVIRONMENT
        sftp> cd files
        sftp> mkdir private
        sftp> cd private
@@ -28,21 +31,16 @@ Then you need to add the relevant code to your Pantheon project:
        ```
 
 3. Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy to test.
-4. Test a deploy out!
-
-Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
-
-### Example `pantheon.yml` ###
-
-Here's an example of what your `pantheon.yml` would look like if this were the only Quicksilver operation you wanted to use:
-
-```yaml
+```
 api_version: 1
 
 workflows:
   deploy:
     after:
       - type: webphp
-        description: do a visual regression test with Diffy.website
-        script: private/scripts/DiffyVisualregression.php
+        description: Do a visual regression test with Diffy.website
+        script: private/scripts/diffyVisualregression.php
 ```
+4. Make a deploy to test environment!
+
+Optionally, you may want to use the `terminus workflows watch YOUR_SITE_ID` command to get immediate debugging feedback. First you would need to install and authenticate your terminus.
