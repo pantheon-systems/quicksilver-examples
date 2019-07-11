@@ -48,7 +48,7 @@ if ($_POST['wf_type'] == 'sync_code') {
 elseif ($_POST['wf_type'] == 'deploy') {
   $description = 'Deploy to environment triggered via Pantheon';
   // Check if there's a deploy tag.
-  $revision = `git describe --tags`;
+  $revision = `git describe --tags --abbrev=0`;
   // Get the annotation.
   $changelog = `git tag -l -n99 $deploy_tag`;
   $user = $_POST['user_email'];
