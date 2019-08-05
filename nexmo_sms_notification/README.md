@@ -6,7 +6,7 @@ Instructions
 
 1. [Sign up and Register at Nexmo and get free credits](https://dashboard.nexmo.com/sign-up) from your Nexmo SMS Website. You may use this sms api in more 225 countries. 
 
-2. Run composer in root folder of nexmo plugin
+2. Clone the repo and run composer in root folder of nexmo plugin
 ```
 composer require nexmo/client
 ```
