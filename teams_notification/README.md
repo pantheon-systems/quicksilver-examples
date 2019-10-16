@@ -12,8 +12,8 @@ Setting up this example is quite easy:
 - Copy the webhook URL into a file called `secrets.json` and store it in the private files area of your site
 
 ```shell
-  $> echo '{"teams_url": "DevChat"}' > secrets.json
-  # Note, you'll need to copy the secrets into each environment where you want to trigger Hipchat notifications.
+  $> echo '{"teams_url": "https://outlook.office.com/webhook/HOOK_URL"}' > secrets.json
+  # Note, you'll need to copy the secrets into each environment where you want to trigger Microsoft Teams notifications.
   $> `terminus site connection-info --env=dev --site=your-site --field=sftp_command`
       Connected to appserver.dev.d1ef01f8-364c-4b91-a8e4-f2a46f14237e.drush.in.
   sftp> cd files
