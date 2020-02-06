@@ -1,0 +1,39 @@
+{
+  "summary": "Card for Deploy message",
+  "themeColor": "0072C6",
+  "title": "New deployment on \"{{PROJECT_NAME}}\" by",
+  "sections": [
+    {
+      "activityTitle": "{{USERNAME}}",
+      "activitySubtitle": "{{USERMAIL}}",
+      "activityImage": "https://secure.gravatar.com/avatar/{{USERMAIL_HASH}}",
+      "facts": [
+        {
+          "name": "Environment:",
+          "value": "{{ENV}}"
+        },
+        {
+          "name": "Tag",
+          "value": "{{DEPLOY_TAG}}"
+        }
+      ],
+      "text": "Deploy note: _{{DEPLOY_NOTE}}_"
+    }
+  ],
+  "potentialAction": [
+    {
+      "@type": "OpenUri",
+      "name": "View deploy log",
+      "targets": [
+        { "os": "default", "uri": "{{DEPLOY_LOG_URL}}" }
+      ]
+    },
+    {
+      "@type": "OpenUri",
+      "name": "View website",
+      "targets": [
+        { "os": "default", "uri": "{{ENV_URL}}" }
+      ]
+    }
+  ]
+}
