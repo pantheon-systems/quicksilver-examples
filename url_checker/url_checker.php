@@ -15,7 +15,7 @@ if (($_ENV['PANTHEON_ENVIRONMENT'] != 'live') || !isset($config['base_url'])) {
 }
 
 // If the base url does not end in a '/', then add one to the end.
-if ($config['base_url'][strlen($config['base_url'] - 1)] != '/') {
+if ($config['base_url'][strlen($config['base_url']) - 1] != '/') {
   $config['base_url'] .= '/';
 }
 
