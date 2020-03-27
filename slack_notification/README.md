@@ -8,7 +8,9 @@ This script shows how easy it is to integrate Slack notifications from your Pant
 2. Copy the secret Webhook URL into a file called `secrets.json` and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of every environment where you want to trigger Slack notifications.
 
   ```shell
-    $> echo '{"slack_url": "https://hooks.slack.com/services/MY/SECRET/URL"}' > secrets.json
+    $> echo '{"slack_url": "https://hooks.slack.com/services/MY/SECRET/URL","slack_channel": "#channel"}' > secrets.json
+    # To post as a specific user you will want to use:
+    $> echo '{"slack_url": "https://hooks.slack.com/services/MY/SECRET/URL","slack_channel": "#channel","slack_username":"myusername"}' > secrets.json
     # Note, you'll need to copy the secrets into each environment where you want to trigger Slack notifications.
     $> `terminus connection:info  --field=sftp_command site.env`
         Connected to appserver.dev.d1ef01f8-364c-4b91-a8e4-f2a46f14237e.drush.in.
