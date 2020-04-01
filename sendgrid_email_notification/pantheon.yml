@@ -1,0 +1,28 @@
+api_version: 1
+
+workflows:
+  deploy_product:
+    after:
+        - type: webphp
+          description: Send email after site creation
+          script: private/scripts/send_email.php
+  create_cloud_development_environment:
+    after:
+        - type: webphp
+          description: Send email after Multidev creation
+          script: private/scripts/send_email.php
+  deploy:
+    after:
+        - type: webphp
+          description: Send email after deploy
+          script: private/scripts/send_email.php
+  sync_code:
+    after:
+        - type: webphp
+          description: Send email after code commit
+          script: private/scripts/send_email.php
+  clear_cache:
+    after:
+        - type: webphp
+          description: Someone is clearing the cache again
+          script: private/scripts/send_email.php
