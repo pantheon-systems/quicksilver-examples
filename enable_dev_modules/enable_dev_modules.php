@@ -17,6 +17,6 @@ if (isset($_POST['environment']) && !in_array($_POST['environment'], array('test
   // Now let's enable devel if it is installed and not already enabled.
   if (isset($modules->devel) && $modules->devel->status !== 'Enabled') {
     // This time let's just passthru() to run the drush command so the command output prints to the workflow log.
-    passthru('drush pm-enable -y devel');
+    passthru('drush pm-enable -y devel 2>&1');
   }
 }

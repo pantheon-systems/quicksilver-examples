@@ -11,28 +11,28 @@ if (isset($_POST['environment']) && !in_array($_POST['environment'], array('test
   if (isset($modules->devel) && isset($modules->devel_generate)) {
 
     if (isset($modules->devel) && $modules->devel->status !== 'Enabled') {
-      passthru('drush pm-enable -y devel');
+      passthru('drush pm-enable -y devel 2>&1');
     }
     if (isset($modules->devel_generate) && $modules->devel_generate->status !== 'Enabled') {
-      passthru('drush pm-enable -y devel_generate');
+      passthru('drush pm-enable -y devel_generate 2>&1');
     }
 
     // Remove the existing production article content
     echo "Removing production article content...\n";
-    passthru('drush genc --kill --types=article 0 0');
+    passthru('drush genc --kill --types=article 0 0 2>&1');
     echo "Removal complete.\n";
 
     // Generate new development article content
     echo "Generating development article content...\n";
-    passthru('drush generate-content 20 --types=article');
+    passthru('drush generate-content 20 --types=article 2>&1');
     echo "Generation complete.\n";
 
     // Disable the Devel and Devel Generate modules as appropriate
     if (isset($modules->devel) && $modules->devel->status !== 'Enabled') {
-      passthru('drush pm-disable -y devel');
+      passthru('drush pm-disable -y devel 2>&1');
     }
     if (isset($modules->devel_generate) && $modules->devel_generate->status !== 'Enabled') {
-      passthru('drush pm-disable -y devel_generate');
+      passthru('drush pm-disable -y devel_generate 2>&1');
     }
   }
   else {
