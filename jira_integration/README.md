@@ -16,7 +16,7 @@ Commits that contain multiple Jira issues will post comments to each issue menti
 ```shell
   $> php -r "print json_encode(['jira_url'=>'https://myjira.atlassian.net','jira_user'=>'serviceaccount','jira_pass'=>'secret']);" > secrets.json
   # Note, you'll need to copy the secrets into each environment where you want to save commit messages to Jira
-  $> `terminus site connection-info --env=dev --site=your-site --field=sftp_command`
+  $> `terminus connection:info --field=sftp_command <site>.<env>`
       Connected to appserver.dev.d1ef01f8-364c-4b91-a8e4-f2a46f14237e.drush.in.
   sftp> cd files
   sftp> mkdir private
