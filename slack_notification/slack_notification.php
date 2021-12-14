@@ -34,7 +34,7 @@ class Slack_Simple_Block {
  * class Slack_Multi_Block - a multi-column block of content (very likely 2 cols)
  */
 class Slack_Multi_Block {
-  public $type; // 'section' or 'header'
+  public $type; // 'section'
   public $fields; // array of Slack_Message
   public function __construct( array $fields ) {
     $this->type   = 'section';
