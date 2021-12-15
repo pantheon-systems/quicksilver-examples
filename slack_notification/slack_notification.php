@@ -9,9 +9,9 @@
 
 // Define some useful classes for creating the $blocks JSON required by Slack
 /**
- * class Slack_Message - a basic { type, text } object to embed in a block
+ * class Slack_Text - a basic { type, text } object to embed in a block
  */
-class Slack_Message {
+class Slack_Text {
   public $type; // 'mrkdwn' or 'plain_text'
   public $text;
   public function __construct( string $text='', string $type='mrkdwn' ) {
@@ -24,8 +24,8 @@ class Slack_Message {
  */
 class Slack_Simple_Block {
   public $type; // 'section' or 'header'
-  public $text; // Slack_Message
-  public function __construct( Slack_Message $text, string $type='section' ) {
+  public $text; // Slack_Text
+  public function __construct( Slack_Text $text, string $type='section' ) {
     $this->type = $type;
     $this->text = $text;
   }
@@ -35,7 +35,7 @@ class Slack_Simple_Block {
  */
 class Slack_Multi_Block {
   public $type; // 'section'
-  public $fields; // array of Slack_Message
+  public $fields; // array of Slack_Text
   public function __construct( array $fields ) {
     $this->type   = 'section';
     $this->fields = $fields;
@@ -44,36 +44,42 @@ class Slack_Multi_Block {
 
 // some festive icons for the header based on the workflow we're running
 $icons = [
-  'deploy'                               => ':rocket: ',
-  'sync_code'                            => ':git: ',
-  'clear_cache'                          => ':broom: ',
-  'clone_database'                       => ':man-with-bunny-ears-partying: ',
-  'deploy_product'                       => ':magic-wand: ',
-  'create_cloud_development_environment' => ':lightning_cloud: '
+  'deploy'                               => ':rocket:',
+  'sync_code'                            => ':git:',
+  'clear_cache'                          => ':broom:',
+  'clone_database'                       => ':man-with-bunny-ears-partying:',
+  'deploy_product'                       => ':magic-wand:',
+  'create_cloud_development_environment' => ':lightning_cloud:'
 ];
+
+// handy variables
+$workflow_type = $_POST[ 'wf_type' ];
+$workflow_name = ucfirst( str_replace('_', ' ',  $workflow_type ) ); // e.g. sync_code -> Sync code
+$site_name     = $_ENV[ 'PANTHEON_SITE_NAME' ];
+$environment   = $_ENV[ 'PANTHEON_ENVIRONMENT' ];
 
 // define initial blocks common to all workflows
 $blocks = [];
 $blocks[] = new Slack_Simple_Block(
-  new Slack_Message( $icons[ $_POST[ 'wf_type' ] ] . ucfirst( str_replace('_', ' ',  $_POST[ 'wf_type' ] ) ), 'plain_text' ),
+  new Slack_Text( "{$icons[ $workflow_type ]} {$workflow_name}", 'plain_text' ),
   'header'
 );
 $blocks[] = new Slack_Multi_Block( [
-  new Slack_Message( "*Site*\n{$_ENV['PANTHEON_SITE_NAME']}" ),
-  new Slack_Message( "*Initated by*\n{$_POST['user_email']}" )
+  new Slack_Text( "*Site*\n{$site_name}" ),
+  new Slack_Text( "*Initated by*\n{$_POST['user_email']}" )
 ] );
 $blocks[] = new Slack_Multi_Block( [
-  new Slack_Message( "*Environment*\n{$_ENV['PANTHEON_ENVIRONMENT']}" ),
-  new Slack_Message( "*Dashboard*\n<https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#" . PANTHEON_ENVIRONMENT . "/code|View Dashboard>" ),
+  new Slack_Text( "*Environment*\n{$environment}" ),
+  new Slack_Text( "*Dashboard*\n<https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#{$environment}/code|View Dashboard>" ),
 ] );
 
 
 // Add custom blocks based on the workflow type.  Note that slack_notification.php must
 // appear in your pantheon.yml for each workflow type you wish to send notifications on.
-switch( $_POST[ 'wf_type' ] ) {
+switch( $workflow_type ) {
   case 'deploy':
     $blocks[] = new Slack_Simple_Block(
-      new Slack_Message( "*Deploy message*\n{$_POST[ 'deploy_message' ]}" )
+      new Slack_Text( "*Deploy message*\n{$_POST[ 'deploy_message' ]}" )
     );
     break;
 
@@ -84,18 +90,18 @@ switch( $_POST[ 'wf_type' ] ) {
     $message   = `git log -1 --pretty=%B`;
 
     $blocks[] = new Slack_Multi_Block( [
-      new Slack_Message( "*Commit time*\n{$time}" ),
-      new Slack_Message( "*Committed by*\n{$committer}" )
+      new Slack_Text( "*Commit time*\n{$time}" ),
+      new Slack_Text( "*Committed by*\n{$committer}" )
     ] );
     $blocks[] = new Slack_Simple_Block(
-      new Slack_Message( "*Commit message*\n{$message}" )
+      new Slack_Text( "*Commit message*\n{$message}" )
     );
     break;
 
   case 'clone_database':
     $blocks[] = new Slack_Multi_Block( [
-        new Slack_Message( "*Cloned from*\n{$_POST['from_environment']}" ),
-        new Slack_Message( "*Cloned to*\n{$_ENV['PANTHEON_ENVIRONMENT']}" )
+        new Slack_Text( "*Cloned from*\n{$_POST['from_environment']}" ),
+        new Slack_Text( "*Cloned to*\n{$environment}" )
     ] );
     break;
 
@@ -105,7 +111,7 @@ switch( $_POST[ 'wf_type' ] ) {
 
   default:
     $blocks[] = new Slack_Simple_Block(
-      new Slack_Message( "*Description*\n{$_POST[ 'qs_description' ]}" )
+      new Slack_Text( "*Description*\n{$_POST[ 'qs_description' ]}" )
     );
 }
 
