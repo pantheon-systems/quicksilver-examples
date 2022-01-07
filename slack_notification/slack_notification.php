@@ -41,6 +41,23 @@ class Slack_Multi_Block {
     $this->fields = $fields;
   }
 }
+/**
+ * class Slack_Divider_Block - a divider block
+ */
+class Slack_Divider_Block {
+  public $type = 'divider';
+}
+/**
+ * class Slack_Context_Block - a context block
+ */
+class Slack_Context_Block {
+  public $type; // 'context'
+  public $elements; // array of Slack_Text
+  public function __construct( array $elements ) {
+    $this->type    = 'context';
+    $this->elements = $elements;
+  }
+}
 
 // some festive icons for the header based on the workflow we're running
 $icons = [
@@ -64,13 +81,10 @@ $blocks[] = new Slack_Simple_Block(
   new Slack_Text( "{$icons[ $workflow_type ]} {$workflow_name}", 'plain_text' ),
   'header'
 );
-$blocks[] = new Slack_Multi_Block( [
-  new Slack_Text( "*Site*\n{$site_name}" ),
-  new Slack_Text( "*Initated by*\n{$_POST['user_email']}" )
-] );
-$blocks[] = new Slack_Multi_Block( [
-  new Slack_Text( "*Environment*\n{$environment}" ),
-  new Slack_Text( "*Dashboard*\n<https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#{$environment}/code|View Dashboard>" ),
+$blocks[] = new Slack_Context_Block( [
+  new Slack_Text( "Site: *<https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#{$environment}/code|{$site_name}>*" ),
+  new Slack_Text( "Env: *{$environment}*" ),
+  new Slack_Text( "Initated by: *{$_POST['user_email']}*" ),
 ] );
 
 
@@ -114,6 +128,12 @@ switch( $workflow_type ) {
       new Slack_Text( "*Description*\n{$_POST[ 'qs_description' ]}" )
     );
 }
+
+// add a divider to mark the end of the message
+$blocks[] = new Slack_Divider_Block();
+
+// echo "Blocks:\n";
+// print_r( $blocks ); // DEBUG
 
 // actually post the notification
 _post_to_slack( $blocks );
