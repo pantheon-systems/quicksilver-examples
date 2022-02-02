@@ -73,7 +73,7 @@ $icons = [
 $workflow_type = $_POST[ 'wf_type' ];
 $workflow_name = ucfirst( str_replace('_', ' ',  $workflow_type ) ); // e.g. sync_code -> Sync code
 $site_name     = $_ENV[ 'PANTHEON_SITE_NAME' ];
-$environment   = strtoupper( $_ENV[ 'PANTHEON_ENVIRONMENT' ] );
+$environment   = $_ENV[ 'PANTHEON_ENVIRONMENT' ];
 
 // define initial blocks common to all workflows
 $blocks = [];
@@ -83,7 +83,7 @@ $blocks[] = new Slack_Simple_Block(
 );
 $blocks[] = new Slack_Context_Block( [
   new Slack_Text( "Site: *<https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#{$environment}/code|{$site_name}>*" ),
-  new Slack_Text( "Env: *{$environment}*" ),
+  new Slack_Text( "Env: *" . strtoupper ( $environment ) . "*" ),
   new Slack_Text( "Initated by: *{$_POST['user_email']}*" ),
 ] );
 
