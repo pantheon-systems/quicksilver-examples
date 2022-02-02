@@ -73,7 +73,7 @@ $icons = [
 $workflow_type = $_POST[ 'wf_type' ];
 $workflow_name = ucfirst( str_replace('_', ' ',  $workflow_type ) ); // e.g. sync_code -> Sync code
 $site_name     = $_ENV[ 'PANTHEON_SITE_NAME' ];
-$environment   = $_ENV[ 'PANTHEON_ENVIRONMENT' ];
+$environment   = strtoupper( $_ENV[ 'PANTHEON_ENVIRONMENT' ] );
 
 // define initial blocks common to all workflows
 $blocks = [];
