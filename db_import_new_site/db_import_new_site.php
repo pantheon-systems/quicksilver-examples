@@ -1,10 +1,21 @@
 <?php
-// Don't ever sanitize the database on the live environment. Doing so would
-// destroy the canonical version of the data.
-if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT !== 'live')) {
 
-	// Run the Drush command to sanitize the database.
-	echo "Sanitizing the database...\n";
-	passthru('drush sql-sanitize -y');
-	echo "Database sanitization complete.\n";
-}
+echo ("\n==== Drupal Environment importing database ====\n");
+// Get paths for imports
+$path  = $_SERVER['DOCUMENT_ROOT'] . '/private/data';
+
+// Import database
+echo ('Importing Database from ...');
+
+// Please don't store your database in the repository. This is just for demo purposes.
+echo "${path}/microsite-database.sql && drush cr";
+$cmd = "drush sql:cli < ${path}/microsite-database.sql && drush cr";
+passthru($cmd);
+
+// Import media and files
+echo ('Unzipping image files...');
+$files = $_SERVER['HOME'] . '/files';
+$cmd = "unzip ${path}/files.zip -d ${files}";
+passthru($cmd);
+
+echo ("\n==== Drupal Environment Initialization Complete ====\n");
