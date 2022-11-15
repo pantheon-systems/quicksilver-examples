@@ -55,7 +55,8 @@ class DiffyVisualregression {
         CURLOPT_POST => 1,
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_POSTFIELDS => json_encode(array(
-          'environments' => 'prod-stage',
+          'env1' => 'prod',
+          'env2' => 'stage',
           'withRescan' => false
         ))
       );
@@ -81,7 +82,7 @@ class DiffyVisualregression {
       if (strstr($curlResponse, 'diff: ')) {
           $diffId = (int) str_replace('diff: ', '', $curlResponse);
           if ($diffId) {
-              $this->processMsg .= 'Check out the result here: ' . rtrim(SITE_URL, '/') . '/ui#/diffs/' . $diffId . PHP_EOL;
+              $this->processMsg .= 'Check out the result here: ' . rtrim(SITE_URL, '/') . '/#/diffs/' . $diffId . PHP_EOL;
               return true;
           }
       } else {
