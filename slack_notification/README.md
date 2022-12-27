@@ -4,7 +4,7 @@ Hook into platform workflows and post notifications to Slack.
 
 ## Instructions
 
-1. [Enable Incoming Webhooks](https://api.slack.com/messaging/webhooks#advanced_message_formatting) for your Slack instance.
+1. [Enable Incoming Webhooks](https://my.slack.com/services/new/incoming-webhook/) for your Slack instance.
 2. Copy the secret Webhook URL into a file called `secrets.json` and store it in the [private files](https://pantheon.io/docs/articles/sites/private-files/) directory of each environment where you want to trigger Slack notifications. The secret WebHook URL is like a password, which should not be stored in version control.
 
 ```shell
