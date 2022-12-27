@@ -10,12 +10,12 @@ $config = url_checker_get_config();
 // If we are not running in the live environment, or if there
 // is no 'base_url' defined in config.json, then generate an
 // appropriate URL for this current environment.
-if (($_ENV['PANTHEON_ENVIRONMENT'] != 'live') || !is_set($config['base_url'])) {
-  $config['base_url'] = 'http://' . $env . '-' . $site . '.pantheon.io';
+if (($_ENV['PANTHEON_ENVIRONMENT'] != 'live') || !isset($config['base_url'])) {
+  $config['base_url'] = 'http://' . $env . '-' . $site . '.pantheonsite.io';
 }
 
 // If the base url does not end in a '/', then add one to the end.
-if ($config['base_url'][strlen($config['base_url'] - 1)] != '/') {
+if ($config['base_url'][strlen($config['base_url']) - 1] != '/') {
   $config['base_url'] .= '/';
 }
 
@@ -83,7 +83,7 @@ function url_checker_build_output($results, $failed) {
   foreach ($results as $item) {
     $output .= '  ' . $item['status'] . ' - ' . $item['url'] . "\n";
   }
-  $output .= "--------\n" . count($failed) . " failed\n\n";
+  $output .= "--------\n" . $failed . " failed\n\n";
   return $output;
 }
 

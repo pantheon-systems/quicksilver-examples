@@ -25,12 +25,12 @@ workflows:
         script: private/scripts/debug.php
 ```
 
-### Example `terminus workflows watch` Output ###
+### Example `terminus workflow:watch` Output ###
 
 Triggering cache clears from your dashboard you should enjoy nice debugging output like this:
 
 ```shell
-$> terminus workflows watch --site=your-site-name
+$> terminus workflow:watch your-site-name
 [2015-12-15 03:17:26] [info] Watching workflows...
 [2015-12-15 03:17:50] [info] Started 1c5421b8-a2db-11e5-8a28-bc764e10b0ce Clear cache for "dev" (dev)
 [2015-12-15 03:17:58] [info] Finished Workflow 1c5421b8-a2db-11e5-8a28-bc764e10b0ce Clear cache for "dev" (dev)

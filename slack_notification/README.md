@@ -10,7 +10,7 @@ Hook into platform workflows and post notifications to Slack.
   ```shell
     $> echo '{"slack_url": "https://hooks.slack.com/services/MY/SECRET/URL"}' > secrets.json
     # Note, you'll need to copy the secrets into each environment where you want to trigger Slack notifications.
-    $> `terminus site connection-info --env=dev --site=your-site --field=sftp_command`
+    $> `terminus connection:info  --field=sftp_command site.env`
         Connected to appserver.dev.d1ef01f8-364c-4b91-a8e4-f2a46f14237e.drush.in.
     sftp> cd files  
     sftp> mkdir private
@@ -19,7 +19,7 @@ Hook into platform workflows and post notifications to Slack.
     sftp> quit
   ```
 
-3. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control. Note this is a different `private` directory than where the `secrets.json` is stored. 
+3. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control. Note this is a different `private` directory than where the `secrets.json` is stored.
 4. Add Quicksilver operations to your `pantheon.yml`
 5. Test a deploy out and see the notification in the **#quicksilver** channel. If you'd like to post to a different channel, just change the value in `slack_notification.php`.
 

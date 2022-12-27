@@ -3,9 +3,10 @@
 // Important constants :)
 $pantheon_yellow = '#EFD01B';
 
-// Default values for parameters
+// Default values for parameters - this will assume the channel you define the webhook for.
+// The full Slack Message API allows you to specify other channels and enhance the messagge further
+// if you like: https://api.slack.com/docs/messages/builder
 $defaults = array(
-  'slack_channel' => '#quicksilver',
   'slack_username' => 'Pantheon-Quicksilver',
   'always_show_text' => false,
 );
@@ -58,15 +59,19 @@ switch($_POST['wf_type']) {
     $text = 'Deploy to the '. $_ENV['PANTHEON_ENVIRONMENT'];
     $text .= ' environment of '. $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
     $text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
-    $text .= "\n\n*DEPLOY MESSAGE*: $deploy_message";
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
     $fields[] = array(
-      'title' => 'Deploy Message',
+      'title' => 'Details',
       'value' => $text,
       'short' => 'false'
     );
+    $fields[] = array(
+      'title' => 'Deploy Note',
+      'value' => $deploy_message,
+      'short' => 'false'
+    );  
     break;
 
   case 'sync_code':
@@ -83,7 +88,7 @@ switch($_POST['wf_type']) {
     // Build an array of fields to be rendered with Slack Attachments as a table
     // attachment-style formatting:
     // https://api.slack.com/docs/attachments
-    $fields += array(
+    $fields = array_merge($fields, array(
       array(
         'title' => 'Commit',
         'value' => rtrim($hash),
@@ -91,9 +96,17 @@ switch($_POST['wf_type']) {
       ),
       array(
         'title' => 'Commit Message',
-        'value' => $message,
+        'value' => rtrim($message),
         'short' => 'false'
       )
+    ));
+    break;
+
+  case 'clear_cache':
+    $fields[] = array(
+      'title' => 'Cleared caches',
+      'value' => 'Cleared caches on the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . "!\n",
+      'short' => 'false'
     );
     break;
 
@@ -104,7 +117,7 @@ switch($_POST['wf_type']) {
 
 $attachment = array(
   'fallback' => $text,
-  'pretext' => 'Deploying :rocket:',
+  'pretext' => ($_POST['wf_type'] == 'clear_cache') ? 'Caches cleared :construction:' : 'Deploying :rocket:',
   'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
   'fields' => $fields
 );
@@ -125,7 +138,7 @@ function _get_secrets($requiredKeys, $defaults)
   }
   $secretsContents = file_get_contents($secretsFile);
   $secrets = json_decode($secretsContents, 1);
-  if ($secrets == FALSE) {
+  if ($secrets == false) {
     die('Could not parse json in secrets file. Aborting!');
   }
   $secrets += $defaults;

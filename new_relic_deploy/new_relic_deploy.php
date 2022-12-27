@@ -1,11 +1,18 @@
 <?php
+// No need to log this script operation in New Relic's stats.
+// PROTIP: you might also want to use this snippet if you have PHP code handling
+// very fast things like redirects or the like.
+if (extension_loaded('newrelic')) {
+  newrelic_ignore_transaction();
+}
+
 // Fetch metadata from Pantheon's internal API.
-$req = pantheon_curl('https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', NULL, 8443);
+$req = pantheon_curl('https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', null, 8443);
 $meta = json_decode($req['body'], true);
 
 // Get the right binding for the current ENV.
 // It should be possible to just fetch the one for the current env.
-$nr = FALSE;
+$nr = false;
 foreach($meta as $data) {
   if ($data['environment'] === PANTHEON_ENVIRONMENT) {
     $nr = $data;
@@ -13,7 +20,7 @@ foreach($meta as $data) {
   }
 }
 // Fail fast if we're not going to be able to call New Relic.
-if ($nr == FALSE) {
+if ($nr == false) {
   echo "\n\nALERT! No New Relic metadata could be found.\n\n";
   exit();
 }
@@ -31,7 +38,7 @@ if ($_POST['wf_type'] == 'sync_code') {
     // This indicates an in-dashboard SFTP commit.
     $user = trim(`git log --pretty=format:"%ae" -1`);
     $changelog = trim(`git log --pretty=format:"%b" -1`);
-    $changelog .= "\n\n" . '(Commit made via Pantheon dashbaord.)';
+    $changelog .= "\n\n" . '(Commit made via Pantheon dashboard.)';
   }
   else {
     $user = $_POST['user_email'];
@@ -43,9 +50,9 @@ elseif ($_POST['wf_type'] == 'deploy') {
   // Topline description:
   $description = 'Deploy to environment triggered via Pantheon';
   // Find out if there's a deploy tag:
-  $revision = `git describe --tags`;
+  $revision = `git describe --tags --abbrev=0`;
   // Get the annotation:
-  $changelog = `git tag -l -n99 $deploy_tag`;
+  $changelog = `git tag -l -n99 $revision`;
   $user = $_POST['user_email'];
 }
 

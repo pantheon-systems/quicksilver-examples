@@ -1,6 +1,6 @@
 <?php
 
-// Get the environment; we will post a new comment to Jira each time
+// Get the environment; we will post a new comment to Asana each time
 // a commit appears on a new branch on Pantheon.
 $env = $_ENV['PANTHEON_ENVIRONMENT'];
 
@@ -10,13 +10,13 @@ if (($env == 'live') || ($env == 'test')) {
 }
 
 // Look up the secrets from the secrets file.
-$secrets = _get_secrets(array('jira_url', 'jira_user', 'jira_pass'), array());
+$secrets = _get_secrets(array('asana_access_token'), array());
 
 // Get latest commit
 $current_commithash = shell_exec('git rev-parse HEAD');
 $last_commithash = false;
 // Retrieve the last commit processed by this script
-$commit_file = $_SERVER['HOME'] . "/files/private/{$env}_jira_integration_commit.txt";
+$commit_file = $_SERVER['HOME'] . "/files/private/{$env}_asana_integration_commit.txt";
 if (file_exists($commit_file)) {
   $last_processed_commithash = trim(file_get_contents($commit_file));
   // We should (almost) always find our last commit still in the repository;
@@ -33,27 +33,27 @@ file_put_contents($commit_file, $current_commithash, LOCK_EX);
 // Retrieve git log for commits after last processed, to current
 $commits = _get_commits($current_commithash, $last_commithash, $env);
 
-// Check each commit message for Jira ticket numbers
-foreach ($commits['jira'] as $ticket_id => $commit_ids) {
+// Check each commit message for Asana task IDs
+foreach ($commits['asana'] as $task_id => $commit_ids) {
   foreach ($commit_ids as $commit_id) {
-    send_commit($secrets, $ticket_id, $commits['history'][$commit_id]);
+    send_commit($secrets, $task_id, $commits['history'][$commit_id]);
   }
 }
 
 /**
  * Do git operations to find all commits between the specified commit hashes,
  * and return an associative array containing all applicable commits that
- * contain references to Jira issues.
+ * contain references to Asana tasks.
  */
 function _get_commits($current_commithash, $last_commithash, $env) {
   $commits = array(
     // Raw output of git log since the last processed
     'history_raw' => null,
-    // Formatted array of commits being sent to jira
+    // Formatted array of commits being sent to Asana
     'history' => array(),
-    // An array keyed by jira ticket id, each holding an
+    // An array keyed by Asana task id, each holding an
     // array of commit ids.
-    'jira' => array()
+    'asana' => array()
   );
 
   $cmd = 'git log'; // add -p to include diff
@@ -74,23 +74,22 @@ function _get_commits($current_commithash, $last_commithash, $env) {
     $lines = explode("\n", $str);
     $commit['id'] = $lines[0];
     $commit['message'] = trim(implode("\n", array_slice($lines, 4)));
-    $commit['formatted'] = '{panel:title=Commit: ' . substr($commit['id'], 0, 10) . ' [' . $env . ']|borderStyle=dashed|borderColor=#ccc|titleBGColor=#e5f2ff|bgColor=#f2f2f2}
+    $commit['formatted'] = 'Commit: ' . substr($commit['id'], 0, 10) . ' [' . $env . ']
     ' . $commit['message'] . '
-    ~' . $lines[1] . ' - ' . $lines[2] . '~
-    {panel}';
-    // Look for matches on a Jira issue ID format
-    // Expected pattern: "PROJECT-ID: comment".
-    preg_match('/([A-Z]+-[0-9]+)/i', $commit['message'], $matches);
+    ~' . $lines[1] . ' - ' . $lines[2];
+    // Look for matches on a Asana task ID format
+    // = [number]
+    preg_match('/\[[0-9]+\]/', $commit['message'], $matches);
     if (count($matches) > 0) {
-      // Build the $commits['jira'] array so there is
+      // Build the $commits['asana'] array so there is
       // only 1 item per ticket id
-      foreach ($matches as $ticket_id) {
-        $ticket_id = strtoupper($ticket_id);
-        if (!isset($commits['jira'][$ticket_id])) {
-          $commits['jira'][$ticket_id] = array();
+      foreach ($matches as $task_id_enc) {
+        $task_id = substr($task_id_enc, 1, -1);
+        if (!isset($commits['asana'][$task_id])) {
+          $commits['asana'][$task_id] = array();
         }
         // ... and only 1 item per commit id
-        $commits['jira'][$ticket_id][$commit['id']] = $commit['id'];
+        $commits['asana'][$task_id][$commit['id']] = $commit['id'];
       }
       // Add the commit to the history array since there was a match.
       $commits['history'][$commit['id']] = $commit;
@@ -100,19 +99,20 @@ function _get_commits($current_commithash, $last_commithash, $env) {
 }
 
 /**
- * Send commits to Jira
+ * Send commits to Asana
  */
-function send_commit($secrets, $ticket_id, $commit) {
-  $payload = json_encode(array('body' => $commit['formatted']));
+function send_commit($secrets, $task_id, $commit) {
+  $payload = array(
+    'text' => $commit['formatted']
+  );
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $secrets['jira_url'] . '/rest/api/2/issue/' . $ticket_id . '/comment');
-  curl_setopt($ch, CURLOPT_USERPWD, $secrets['jira_user'] . ':' . $secrets['jira_pass']);
+  curl_setopt($ch, CURLOPT_URL, 'https://app.asana.com/api/1.0/tasks/' . $task_id . '/stories');
   curl_setopt($ch, CURLOPT_POST, 1);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
   curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-  print("\n==== Posting to Jira ====\n");
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$secrets['asana_access_token']));
+  print("\n==== Posting to Asana ====\n");
   $result = curl_exec($ch);
   print("RESULT: $result");
   print("\n===== Post Complete! =====\n");
@@ -128,7 +128,7 @@ function _get_secrets($requiredKeys, $defaults)
 {
   $secretsFile = $_SERVER['HOME'] . '/files/private/secrets.json';
   if (!file_exists($secretsFile)) {
-    die('No secrets file found. Aborting!');
+    die('No secrets file ['.$secretsFile.'] found. Aborting!');
   }
   $secretsContents = file_get_contents($secretsFile);
   $secrets = json_decode($secretsContents, 1);

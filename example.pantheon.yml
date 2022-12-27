@@ -6,12 +6,15 @@ api_version: 1
 # Set site's PHP version to 7.0
 php_version: 7.0
 
+# Drush Version
+# https://pantheon.io/docs/pantheon-yml/#drush-version
+drush_version: 8
+
 # Protected Web Paths
 # https://pantheon.io/docs/pantheon-yml#protected-web-paths
 protected_web_paths:
    - /example.txt
    - /example_directory
-
 
 # Nested Docroot
 # https://pantheon.io/docs/pantheon-yml#nested-docroot

@@ -23,7 +23,7 @@ workflows:
   clone_database:
     after:
       - type: webphp
-        description: enerate development article content after the database clones
+        description: Generate development article content after the database clones
         script: private/scripts/generate_dev_content.php
 ```
 

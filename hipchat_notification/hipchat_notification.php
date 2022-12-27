@@ -70,7 +70,7 @@ function _get_secrets($requiredKeys, $defaults)
   }
   $secretsContents = file_get_contents($secretsFile);
   $secrets = json_decode($secretsContents, 1);
-  if ($secrets == FALSE) {
+  if ($secrets == false) {
     die('Could not parse json in secrets file. Aborting!');
   }
   $secrets += $defaults;
