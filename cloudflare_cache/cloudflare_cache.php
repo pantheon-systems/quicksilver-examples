@@ -17,7 +17,7 @@ if ($config == FALSE) {
 purge_cache($config);
 
 function purge_cache($config) {
-  $payload = json_encode(array('purge_everything' => TRUE));
+  $payload = json_encode(array('purge_everything' => true));
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/zones/' . $config['zone_id'] . '/purge_cache');
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');

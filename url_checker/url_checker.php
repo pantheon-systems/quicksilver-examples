@@ -11,7 +11,7 @@ $config = url_checker_get_config();
 // is no 'base_url' defined in config.json, then generate an
 // appropriate URL for this current environment.
 if (($_ENV['PANTHEON_ENVIRONMENT'] != 'live') || !isset($config['base_url'])) {
-  $config['base_url'] = 'http://' . $env . '-' . $site . '.pantheon.io';
+  $config['base_url'] = 'http://' . $env . '-' . $site . '.pantheonsite.io';
 }
 
 // If the base url does not end in a '/', then add one to the end.

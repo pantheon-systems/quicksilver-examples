@@ -7,12 +7,12 @@ if (extension_loaded('newrelic')) {
 }
 
 // Fetch metadata from Pantheon's internal API.
-$req = pantheon_curl('https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', NULL, 8443);
+$req = pantheon_curl('https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', null, 8443);
 $meta = json_decode($req['body'], true);
 
 // Get the right binding for the current ENV.
 // It should be possible to just fetch the one for the current env.
-$nr = FALSE;
+$nr = false;
 foreach($meta as $data) {
   if ($data['environment'] === PANTHEON_ENVIRONMENT) {
     $nr = $data;
@@ -20,7 +20,7 @@ foreach($meta as $data) {
   }
 }
 // Fail fast if we're not going to be able to call New Relic.
-if ($nr == FALSE) {
+if ($nr == false) {
   echo "\n\nALERT! No New Relic metadata could be found.\n\n";
   exit();
 }
