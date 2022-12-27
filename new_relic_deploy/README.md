@@ -15,7 +15,7 @@ Setting up this example is easy:
 3. Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
 4. Test a deploy out!
 
-Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback.
+Optionally, you may want to use the `terminus workflow:watch yoursitename` command to get immediate debugging feedback.
 
 ### Example `pantheon.yml` ###
 
