@@ -2,6 +2,8 @@
 
 Hook into platform workflows and post notifications to Google Chat.
 
+![Google Chat Notification Example](https://user-images.githubusercontent.com/1759794/210021056-07b0afae-0086-40bb-85c1-a96a3d66998d.png)
+
 ## Instructions
 
 1. [Register an Incoming Webhook](https://developers.google.com/chat/how-tos/webhooks) for a Google Chat space.
