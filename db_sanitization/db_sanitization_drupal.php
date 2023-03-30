@@ -5,6 +5,6 @@ if (defined('PANTHEON_ENVIRONMENT') && (PANTHEON_ENVIRONMENT !== 'live')) {
 
 	// Run the Drush command to sanitize the database.
 	echo "Sanitizing the database...\n";
-	passthru('drush sql-sanitize -y');
+	passthru('drush sql-sanitize -y 2>&1');
 	echo "Database sanitization complete.\n";
 }
