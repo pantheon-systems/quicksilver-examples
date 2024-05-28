@@ -5,6 +5,8 @@
  * Sets New Relic Apdex T values for newly created multidev environments.
  */
 
+define("API_KEY_SECRET_NAME", "new_relic_api_key");
+
 // get New Relic info from the dev environment
 // Change to test or live as you wish
 $app_info = get_app_info( 'dev' );
@@ -30,26 +32,25 @@ set_thresholds( $app_apdex_threshold, $end_user_apdex_threshold, $enable_real_us
  */
 function get_nr_connection_info( $env = 'dev' ) {
   $output = array();
-  $req    = pantheon_curl( 'https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', null, 8443 );
-  $meta   = json_decode( $req['body'], true );
+  $req    = pantheon_curl( 'https://api.live.getpantheon.com/sites/self/name', null, 8443 );
+  $site_name = trim($req['body']);
+  $site_name = trim($site_name, '"');
+  $app_name = sprintf( "%s (%s)", $site_name, $env );
+  $output['app_name'] = $app_name;
 
-  foreach ( $meta as $data ) {
-    if ( $data['environment'] === $env ) {
-      if ( empty( $data['api_key'] ) ) {
-        echo "Failed to get API Key\n";
+  // Now get secrets for this site.
+  $req = pantheon_curl( 'https://customer-secrets.svc.pantheon.io/site/secrets' );
 
-        return;
-      }
-      $output['api_key'] = $data['api_key'];
+  $secrets_json   = json_decode( $req['body'], true );
+  // Use API_KEY_SECRET_NAME to get the API key.
+  if ( empty( $secrets_json['Secrets'][API_KEY_SECRET_NAME] ) ) {
+    echo "Failed to get secrets\n";
 
-      if ( empty( $data['app_name'] ) ) {
-        echo "Failed to get app name\n";
-
-        return;
-      }
-      $output['app_name'] = $data['app_name'];
-    }
+    return;
   }
+
+  $secret = $secrets_json['Secrets'][API_KEY_SECRET_NAME];
+  $output['api_key'] = $secret['Value'];
 
   return $output;
 }
