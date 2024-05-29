@@ -6,9 +6,10 @@ if (extension_loaded('newrelic')) {
   newrelic_ignore_transaction();
 }
 
+define("API_KEY_SECRET_NAME", "new_relic_api_key");
+
 // Initialize New Relic
-$api_key = "NEWRELIC_ADMIN_API_KEY";
-$nr = new NewRelic($api_key);
+$nr = new NewRelic();
 
 // Check for Live Deployments only.
 if ($_POST['wf_type'] == 'deploy' && $_ENV['PANTHEON_ENVIRONMENT'] == 'live') {
@@ -25,7 +26,7 @@ echo "Done!";
  */
 class NewRelic {
 
-  private $nr; // New Relic account info.
+  private $nr_app_name; // New Relic account info.
   private $api_key; // New Relic Admin Key
   public $site_uri; // Pantheon Site URI
 
@@ -34,26 +35,18 @@ class NewRelic {
    *
    * @param [string] $api_key New Relic Admin API key.
    */
-  function __construct($api_key) {
+  function __construct() {
     $this->site_uri = 'https://' . $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $_ENV['PANTHEON_SITE_NAME'] . '.pantheonsite.io';
-    $this->api_key = $api_key;
+    $this->api_key = pantheon_get_secret(API_KEY_SECRET_NAME);
 
-    // Fetch metadata from Pantheon's internal API.
-    $req = pantheon_curl('https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', null, 8443);
-    $meta = json_decode($req['body'], true);
+    $env = $_ENV['PANTHEON_ENVIRONMENT'];
+    $site_name = $_ENV['PANTHEON_SITE_NAME'];
+    $app_name = sprintf( "%s (%s)", $site_name, $env );
+    $this->nr_app_name = $app_name;
 
-    // Get the right binding for the current ENV.
-    // It should be possible to just fetch the one for the current env.
-    $this->nr = false;
-    foreach($meta as $data) {
-      if ($data['environment'] === PANTHEON_ENVIRONMENT) {
-        $this->nr = $data;
-        break;
-      }
-    }
     // Fail fast if we're not going to be able to call New Relic.
-    if ($this->nr == false) {
-      die("\n\nALERT! No New Relic metadata could be found.\n\n");
+    if ($this->api_key == false) {
+      die("\n\nALERT! No New Relic API key could be found.\n\n");
     }
   }
   
@@ -102,7 +95,7 @@ class NewRelic {
     $locations = $this->getLocations();
 
     $body = [
-      'name' => $this->nr['app_name'],
+      'name' => $this->nr_app_name,
       'type' => 'SIMPLE',
       'frequency' => $freq,
       'uri' => $this->site_uri,
