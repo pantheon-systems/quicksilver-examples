@@ -32,25 +32,11 @@ set_thresholds( $app_apdex_threshold, $end_user_apdex_threshold, $enable_real_us
  */
 function get_nr_connection_info( $env = 'dev' ) {
   $output = array();
-  $req    = pantheon_curl( 'https://api.live.getpantheon.com/sites/self/name', null, 8443 );
-  $site_name = trim($req['body']);
-  $site_name = trim($site_name, '"');
+  $site_name = $_ENV['PANTHEON_SITE_NAME'];
   $app_name = sprintf( "%s (%s)", $site_name, $env );
   $output['app_name'] = $app_name;
 
-  // Now get secrets for this site.
-  $req = pantheon_curl( 'https://customer-secrets.svc.pantheon.io/site/secrets' );
-
-  $secrets_json   = json_decode( $req['body'], true );
-  // Use API_KEY_SECRET_NAME to get the API key.
-  if ( empty( $secrets_json['Secrets'][API_KEY_SECRET_NAME] ) ) {
-    echo "Failed to get secrets\n";
-
-    return;
-  }
-
-  $secret = $secrets_json['Secrets'][API_KEY_SECRET_NAME];
-  $output['api_key'] = $secret['Value'];
+  $output['api_key'] = pantheon_get_secret(API_KEY_SECRET_NAME);
 
   return $output;
 }
