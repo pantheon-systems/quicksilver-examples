@@ -10,10 +10,12 @@ This script uses a couple clever tricks to get data about the platform. First of
 
 Setting up this example is easy:
 
-1. [Activate New Relic Pro](https://pantheon.io/docs/new-relic/#activate-new-relic-pro) within your site Dashboard. 
-2. Add the example `new_relic_deploy.php` script to the `private` directory of your code repository.
-3. Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
-4. Test a deploy out!
+1. [Activate New Relic Pro](https://pantheon.io/docs/new-relic/#activate-new-relic-pro) within your site Dashboard.
+2. Get a [New Relic User Key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/)
+3. Using [Terminus Secrets Manager Plugin](https://github.com/pantheon-systems/terminus-secrets-manager-plugin), set a site secret for the API key just created (e.g. `new_relic_api_key`, if you name it something else, make sure to update in the script below). Make sure type is `runtime` and scope contains `web`.
+4. Add the example `new_relic_deploy.php` script to the `private` directory of your code repository.
+5. Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
+6. Test a deploy out!
 
 Optionally, you may want to use the `terminus workflow:watch yoursitename` command to get immediate debugging feedback.
 
