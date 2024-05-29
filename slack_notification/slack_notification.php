@@ -103,6 +103,7 @@ switch($_POST['wf_type']) {
     break;
 
   case 'clear_cache':
+    $text = 'Cleared caches';
     $fields[] = array(
       'title' => 'Cleared caches',
       'value' => 'Cleared caches on the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . "!\n",
@@ -122,7 +123,7 @@ $attachment = array(
   'fields' => $fields
 );
 
-_slack_notification($secrets['slack_url'], $secrets['slack_channel'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
+_slack_notification($secrets['slack_url'], $secrets['slack_username'], $text, $attachment);
 
 
 /**
@@ -152,12 +153,11 @@ function _get_secrets($requiredKeys, $defaults)
 /**
  * Send a notification to slack
  */
-function _slack_notification($slack_url, $channel, $username, $text, $attachment, $alwaysShowText = false)
+function _slack_notification($slack_url, $username, $text, $attachment, $alwaysShowText = false)
 {
   $attachment['fallback'] = $text;
   $post = array(
     'username' => $username,
-    'channel' => $channel,
     'icon_emoji' => ':lightning_cloud:',
     'attachments' => array($attachment)
   );
