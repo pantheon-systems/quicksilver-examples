@@ -5,6 +5,8 @@
  * Sets New Relic Apdex T values for newly created multidev environments.
  */
 
+define("API_KEY_SECRET_NAME", "new_relic_api_key");
+
 // get New Relic info from the dev environment
 // Change to test or live as you wish
 $app_info = get_app_info( 'dev' );
@@ -30,26 +32,11 @@ set_thresholds( $app_apdex_threshold, $end_user_apdex_threshold, $enable_real_us
  */
 function get_nr_connection_info( $env = 'dev' ) {
   $output = array();
-  $req    = pantheon_curl( 'https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', null, 8443 );
-  $meta   = json_decode( $req['body'], true );
+  $site_name = $_ENV['PANTHEON_SITE_NAME'];
+  $app_name = sprintf( "%s (%s)", $site_name, $env );
+  $output['app_name'] = $app_name;
 
-  foreach ( $meta as $data ) {
-    if ( $data['environment'] === $env ) {
-      if ( empty( $data['api_key'] ) ) {
-        echo "Failed to get API Key\n";
-
-        return;
-      }
-      $output['api_key'] = $data['api_key'];
-
-      if ( empty( $data['app_name'] ) ) {
-        echo "Failed to get app name\n";
-
-        return;
-      }
-      $output['app_name'] = $data['app_name'];
-    }
-  }
+  $output['api_key'] = pantheon_get_secret(API_KEY_SECRET_NAME);
 
   return $output;
 }

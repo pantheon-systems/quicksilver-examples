@@ -6,21 +6,11 @@ if (extension_loaded('newrelic')) {
   newrelic_ignore_transaction();
 }
 
-// Fetch metadata from Pantheon's internal API.
-$req = pantheon_curl('https://api.live.getpantheon.com/sites/self/bindings?type=newrelic', null, 8443);
-$meta = json_decode($req['body'], true);
+define("API_KEY_SECRET_NAME", "new_relic_api_key");
 
-// Get the right binding for the current ENV.
-// It should be possible to just fetch the one for the current env.
-$nr = false;
-foreach($meta as $data) {
-  if ($data['environment'] === PANTHEON_ENVIRONMENT) {
-    $nr = $data;
-    break;
-  }
-}
+$data = get_nr_connection_info(PANTHEON_ENVIRONMENT);
 // Fail fast if we're not going to be able to call New Relic.
-if ($nr == false) {
+if ($data == false) {
   echo "\n\nALERT! No New Relic metadata could be found.\n\n";
   exit();
 }
@@ -73,3 +63,19 @@ $curl .= ' https://api.newrelic.com/deployments.xml';
 echo "Logging deployment in New Relic...\n";
 passthru($curl);
 echo "Done!";
+
+/**
+ * Gets the New Relic API Key so that further requests can be made.
+ *
+ * Also gets New Relic's name for the given environment.
+ */
+function get_nr_connection_info( $env = 'dev' ) {
+  $output = array();
+  $site_name = $_ENV['PANTHEON_SITE_NAME'];
+  $app_name = sprintf( "%s (%s)", $site_name, $env );
+  $output['app_name'] = $app_name;
+
+  $output['api_key'] = pantheon_get_secret(API_KEY_SECRET_NAME);
+
+  return $output;
+}
