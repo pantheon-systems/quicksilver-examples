@@ -2,8 +2,6 @@
 
 This example will show you how you can automatically log changes to your site into [New Relic's Deployments Page](https://docs.newrelic.com/docs/apm/applications-menu/events/deployments-page) when the workflow fires on Pantheon. This can be quite useful for keeping track of all your performance improvements!
 
-This script uses a couple clever tricks to get data about the platform. First of all it uses the `pantheon_curl()` command to fetch the extended metadata information for the site/environment, which includes the New Relic API key. It also uses data within the git repository on the platform to pull out deploy tag numbers and log messages. 
-
 > **Note:** This example will work for all Pantheon sites once the bundled [New Relic APM Pro feature](https://pantheon.io/features/new-relic) is activated, regardless of service level. 
 
 ## Instructions ##
