@@ -50,7 +50,7 @@ elseif ($_POST['wf_type'] == 'deploy') {
 
 // clean up the git output
 $revision = rtrim($revision, "\n");
-$changelog = rtrim($revision, "\n");
+$changelog = rtrim($changelog, "\n");
 
 $deployment_data = [
   "deployment" => [
