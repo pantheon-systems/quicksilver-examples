@@ -48,6 +48,10 @@ elseif ($_POST['wf_type'] == 'deploy') {
   $user = $_POST['user_email'];
 }
 
+// clean up the git output
+$revision = rtrim($revision, "\n");
+$changelog = rtrim($revision, "\n");
+
 $deployment_data = [
   "deployment" => [
     "revision" => $revision,
