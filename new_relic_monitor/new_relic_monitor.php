@@ -37,12 +37,12 @@ class NewRelic {
    */
   function __construct() {
     $this->site_uri = 'https://' . $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $_ENV['PANTHEON_SITE_NAME'] . '.pantheonsite.io';
-    $this->api_key = pantheon_get_secret(API_KEY_SECRET_NAME);
 
-    $env = $_ENV['PANTHEON_ENVIRONMENT'];
-    $site_name = $_ENV['PANTHEON_SITE_NAME'];
-    $app_name = sprintf( "%s (%s)", $site_name, $env );
-    $this->nr_app_name = $app_name;
+    if (function_exists('pantheon_get_secret')) {
+      $this->api_key = pantheon_get_secret(API_KEY_SECRET_NAME);
+    }
+
+    $this->nr_app_name = ini_get('newrelic.appname');
 
     // Fail fast if we're not going to be able to call New Relic.
     if ($this->api_key == false) {

@@ -30,13 +30,13 @@ set_thresholds( $app_apdex_threshold, $end_user_apdex_threshold, $enable_real_us
  *
  * Also gets New Relic's name for the given environment.
  */
-function get_nr_connection_info( $env = 'dev' ) {
+function get_nr_connection_info() {
   $output = array();
-  $site_name = $_ENV['PANTHEON_SITE_NAME'];
-  $app_name = sprintf( "%s (%s)", $site_name, $env );
-  $output['app_name'] = $app_name;
 
-  $output['api_key'] = pantheon_get_secret(API_KEY_SECRET_NAME);
+  $output['app_name'] = ini_get('newrelic.appname');
+  if (function_exists('pantheon_get_secret')) {
+    $output['api_key'] = pantheon_get_secret(API_KEY_SECRET_NAME);
+  }
 
   return $output;
 }
@@ -111,7 +111,7 @@ function get_app_info( $env = 'dev' ) {
  */
 function set_thresholds( $app_apdex_threshold, $end_user_apdex_threshold, $enable_real_user_monitoring ) {
 
-  $nr_connection_info = get_nr_connection_info( PANTHEON_ENVIRONMENT );
+  $nr_connection_info = get_nr_connection_info();
   if ( empty( $nr_connection_info ) ) {
     echo "Unable to get New Relic connection info\n";
 

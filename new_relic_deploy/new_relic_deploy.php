@@ -8,7 +8,7 @@ if (extension_loaded('newrelic')) {
 
 define("API_KEY_SECRET_NAME", "new_relic_api_key");
 
-$data = get_nr_connection_info(PANTHEON_ENVIRONMENT);
+$data = get_nr_connection_info();
 // Fail fast if we're not going to be able to call New Relic.
 if ($data == false) {
   echo "\n\nALERT! No New Relic metadata could be found.\n\n";
@@ -84,13 +84,13 @@ echo "\nDone!\n";
  *
  * Also gets New Relic's name for the given environment.
  */
-function get_nr_connection_info( $env = 'dev' ) {
+function get_nr_connection_info() {
   $output = array();
-  $site_name = $_ENV['PANTHEON_SITE_NAME'];
-  $app_name = sprintf( "%s (%s)", $site_name, $env );
-  $output['app_name'] = $app_name;
 
-  $output['api_key'] = pantheon_get_secret(API_KEY_SECRET_NAME);
+  $output['app_name'] = ini_get('newrelic.appname');
+  if (function_exists('pantheon_get_secret')) {
+    $output['api_key'] = pantheon_get_secret(API_KEY_SECRET_NAME);
+  }
 
   return $output;
 }
