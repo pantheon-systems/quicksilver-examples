@@ -15,14 +15,19 @@ if ($data == false) {
   exit();
 }
 
-$app_id = get_app_id($data['api_key'], $data['app_name']);
+$app_guid = get_app_guid($data['api_key'], $data['app_name']);
 
-// This is one example that handles code pushes, dashboard 
-// commits, and deploys between environments. To make sure we 
+if (empty($app_guid)) {
+  echo "Error: No New Relic app found with name " . $data['app_name'];
+  exit();
+}
+
+// This is one example that handles code pushes, dashboard
+// commits, and deploys between environments. To make sure we
 // have good deploy markers, we gather data differently depending
 // on the context.
 
-if (in_array($_POST['wf_type'], ['sync_code','sync_code_with_build'])) {  
+if (in_array($_POST['wf_type'], ['sync_code','sync_code_with_build'])) {
   // commit 'subject'
   $description = trim(`git log --pretty=format:"%s" -1`);
   $revision = trim(`git log --pretty=format:"%h" -1`);
@@ -30,12 +35,12 @@ if (in_array($_POST['wf_type'], ['sync_code','sync_code_with_build'])) {
     // This indicates an in-dashboard SFTP commit.
     $user = trim(`git log --pretty=format:"%ae" -1`);
     $changelog = trim(`git log --pretty=format:"%b" -1`);
-    $changelog .= "\n\n" . '(Commit made via Pantheon dashboard.)';
+    $changelog .= ' (Commit made via Pantheon dashboard.)';
   }
   else {
     $user = $_POST['user_email'];
     $changelog = trim(`git log --pretty=format:"%b" -1`);
-    $changelog .= "\n\n" . '(Triggered by remote git push.)';
+    $changelog .= ' (Triggered by remote git push.)';
   }
 }
 elseif ($_POST['wf_type'] == 'deploy') {
@@ -62,20 +67,10 @@ $deployment_data = [
   ]
 ];
 
-echo "Logging deployment in New Relic App $app_id...\n";
+echo "Logging deployment in New Relic App $app_guid...\n";
+$response = create_newrelic_deployment_change_tracking($data['api_key'], $app_guid, $user, $revision, $changelog, $description);
 
-$json_data = json_encode($deployment_data, JSON_FORCE_OBJECT);
-echo "Sending: $json_data\n";
-
-$command = "curl -X POST 'https://api.newrelic.com/v2/applications/$app_id/deployments.json' " .
-           "-H 'X-Api-Key: {$data['api_key']}' " .
-           "-H 'Content-Type: application/json' " .
-           "-H 'Accept: application/json' " .
-           "-d '" . $json_data . "'";
-
-echo "Running: $command\n";
-
-passthru($command);
+echo "\nResponse from New Relic:" . $response;
 
 echo "\nDone!\n";
 
@@ -95,26 +90,65 @@ function get_nr_connection_info() {
   return $output;
 }
 
-/**
- * Get the id of the current multidev environment.
- */
-function get_app_id( $api_key, $app_name ) {
-  $return = '';
-  $s      = curl_init();
-  curl_setopt( $s, CURLOPT_URL, 'https://api.newrelic.com/v2/applications.json' );
-  curl_setopt( $s, CURLOPT_HTTPHEADER, array( 'X-API-KEY:' . $api_key ) );
-  curl_setopt( $s, CURLOPT_RETURNTRANSFER, 1 );
-  $result = curl_exec( $s );
-  curl_close( $s );
+// Get GUID of the current environment.
+function get_app_guid(string $api_key, string $app_name): string {
+  $url = 'https://api.newrelic.com/graphql';
+  $headers = ['Content-Type: application/json', 'API-Key: ' . $api_key];
 
-  $result = json_decode( $result, true );
+  // Updated entitySearch query with name filter
+  $data = '{ "query": "{ actor { entitySearch(query: \\"(domain = \'APM\' and type = \'APPLICATION\' and name = \'' . $app_name . '\')\\") { count query results { entities { entityType name guid } } } } }" }';
 
-  foreach ( $result['applications'] as $application ) {
-    if ( $application['name'] === $app_name ) {
-      $return = $application['id'];
-      break;
-    }
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_POST, 1);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+  $response = curl_exec($ch);
+  curl_close($ch);
+
+
+  $decoded_response = json_decode($response, true);
+
+  // Error handling for API response.
+  if (isset($decoded_response['errors'])) {
+    echo "Error: " . $decoded_response['errors'][0]['message'] . "\n";
+    return '';
+  }
+  if (!isset($decoded_response['data']['actor']['entitySearch']['results']['entities']) || !is_array($decoded_response['data']['actor']['entitySearch']['results']['entities'])) {
+    echo "Error: No entities found in New Relic response\n";
+    return '';
   }
 
-  return $return;
+  $entities = $decoded_response['data']['actor']['entitySearch']['results']['entities'];
+  // Since we filtered by name, the first entity should be the correct one.
+  if (isset($entities[0]['guid'])) {
+    return $entities[0]['guid'];
+  }
+  return '';
+}
+
+function create_newrelic_deployment_change_tracking(string $api_key, string $entityGuid, string $user, string $version, string $changelog, string $description): string {
+  $url = 'https://api.newrelic.com/graphql';
+  $headers = ['Content-Type: application/json', 'API-Key: ' . $api_key];
+
+  $timestamp = round(microtime(true) * 1000);
+
+  // Construct the mutation with dynamic variables
+  $data = '{
+    "query": "mutation { changeTrackingCreateDeployment(deployment: { version: \\"' . $version . '\\" user: \\"' . $user . '\\" timestamp: ' . $timestamp . ' entityGuid: \\"' . $entityGuid . '\\" description: \\"' . $description . '\\" changelog: \\"' . $changelog . '\\" }) { changelog deploymentId description entityGuid timestamp user version } }"
+  }';
+
+  $ch = curl_init();
+
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_POST, 1);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+  $response = curl_exec($ch);
+  curl_close($ch);
+  return $response;
 }
