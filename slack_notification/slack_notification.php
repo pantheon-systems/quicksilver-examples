@@ -80,7 +80,7 @@ $blocks = [
     new Slack_Simple_Block(new Slack_Text("{$icons[$workflow_type]} {$workflow_name}", 'plain_text'), 'header'),
     new Slack_Context_Block([
         new Slack_Text("*Site:* <https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#{$environment}/code|{$site_name}>"),
-        new Slack_Text("*Environment:* " . strtoupper($environment)),
+        new Slack_Text("*Environment:* <http://{$environment}-{$site_name}.pantheonsite.io|{$environment}>"),
         new Slack_Text("*Initiated by:* {$_POST['user_email']}"),
     ]),
 ];
