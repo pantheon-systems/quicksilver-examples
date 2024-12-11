@@ -152,7 +152,7 @@ function _post_to_slack($attachments) {
 
     $post = [
         'channel' => '#firehose', // The Slack channel to post to.
-        'blocks' => $blocks,
+        'attachments' => $attachments,
     ];
 
     $payload = json_encode($post);
