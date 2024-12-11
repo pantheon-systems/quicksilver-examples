@@ -145,6 +145,9 @@ _post_to_slack($attachments);
  * @param array $attachments The array of attachments to include in the Slack message.
  */
 function _post_to_slack($attachments) {
+    // Uncomment the following line to debug the attachments array.
+    // echo "Attachments - Raw:\n"; print_r( $attachments ); echo "\n";
+
     $slack_token = pantheon_get_secret('slack_deploybot_token'); // Set the token name to match the secret you added to Pantheon.
 
     $post = [
