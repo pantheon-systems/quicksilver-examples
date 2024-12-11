@@ -70,6 +70,8 @@ $icons = [
 // Extract workflow information
 $workflow_type = $_POST['wf_type'];
 $workflow_name = ucfirst(str_replace('_', ' ', $workflow_type));
+// Uncomment the following line to see the workflow type.
+// printf("Workflow type: %s\n", $workflow_type);
 $site_name = $_ENV['PANTHEON_SITE_NAME'];
 $environment = $_ENV['PANTHEON_ENVIRONMENT'];
 
