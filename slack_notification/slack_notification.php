@@ -60,6 +60,7 @@ class Slack_Context_Block {
 $icons = [
     'deploy' => ':rocket:',
     'sync_code' => ':computer:',
+    'sync_code_external_vcs' => ':computer:',
     'clear_cache' => ':broom:',
     'clone_database' => ':man-with-bunny-ears-partying:',
     'deploy_product' => ':magic_wand:',
