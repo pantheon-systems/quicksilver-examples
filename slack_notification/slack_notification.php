@@ -125,6 +125,14 @@ switch ($workflow_type) {
 // Add a divider block at the end of the message
 $blocks[] = new Slack_Divider_Block();
 
+// Prepare attachments with yellow sidebar
+$attachments = [
+    [
+        'color' => $pantheon_yellow,
+        'blocks' => $blocks,
+    ],
+];
+
 // echo "Blocks:\n";
 // print_r( $blocks ); // DEBUG
 
