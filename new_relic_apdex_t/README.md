@@ -17,9 +17,14 @@ To do the actual setting of default values this script first gets an API key and
 
 To use this example:
 
-1. [Activate New Relic Pro](https://pantheon.io/docs/new-relic/#activate-new-relic-pro) within your site dashboard. 
-2. Add the example `new_relic_apdex_t.php` script to the `private/scripts` directory of your code repository.
-3. Optionally, modify the environment to pull existing threshold T values from at the top of the file. This defaults to `dev` but can also be `test` or `live`.
+1. [Activate New Relic Pro](https://pantheon.io/docs/new-relic/#activate-new-relic-pro) within your site dashboard.
+2. Get a [New Relic User Key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/)
+3. Using [Terminus Secrets Manager Plugin](https://github.com/pantheon-systems/terminus-secrets-manager-plugin), set a site secret for the API key just created (e.g. `new_relic_api_key`, if you name it something else, make sure to update in the script below). Make sure type is `runtime` and scope contains `web`.
+  ```
+    terminus secret:site:set mysite new_relic_api_key --scope=web --type=runtime MY_API_KEY_HERE
+  ```
+4. Add the example `new_relic_apdex_t.php` script to the `private/scripts` directory of your code repository.
+5. Optionally, modify the environment to pull existing threshold T values from at the top of the file. This defaults to `dev` but can also be `test` or `live`.
 
 ```php
 // get New Relic info from the dev environment
