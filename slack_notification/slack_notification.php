@@ -162,7 +162,8 @@ _post_to_slack($attachments);
  * @param array $attachments The array of attachments to include in the Slack message.
  * @param string $slack_channel The channel to send the message to (defined at the top of the script).
  */
-function _post_to_slack($attachments, $slack_channel) {
+function _post_to_slack($attachments) {
+	global $slack_channel;
 	// Uncomment the following line to debug the attachments array.
 	// echo "Attachments:\n"; print_r( $attachments ); echo "\n";
 
