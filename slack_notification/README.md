@@ -46,7 +46,7 @@ curl -X POST -H "Authorization: Bearer xoxb-YOUR-TOKEN" \
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback or use the [Workflow Logs](https://docs.pantheon.io/workflow-logs) to return any debugging output. 
 
-**Note:** The example `slack_notification.php` script uses [message attachments](https://api.slack.com/reference/messaging/attachments) to keep the colored sidebar while using the updated API. This can be swapped out in favor of a [block-based](https://api.slack.com/reference/block-kit/blocks) approach entirely if that cosmetic detail is not important to you (we use blocks for everything else).
+**Note:** The example `slack_notification.php` script uses [message attachments](https://api.slack.com/reference/messaging/attachments) to keep the colored sidebar while using the updated API. This can be swapped out in favor of a [block-based](https://api.slack.com/reference/block-kit/blocks) approach entirely if that cosmetic detail is not important to you. To do this, simply remove the `$attachments` parameter in the `_send_to_slack`
 
 For an example of the script that doesn't use attachments at all, see [@JBCSU's PR](https://github.com/pantheon-systems/quicksilver-examples/pull/176/files).
 
