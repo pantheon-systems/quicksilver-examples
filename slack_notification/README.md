@@ -43,7 +43,7 @@ curl -X POST -H "Authorization: Bearer xoxb-YOUR-TOKEN" \
 1. Add Quicksilver operations to your `pantheon.yml`
 1. Test a deployment and see the notification in the Slack channel associated with the webhook.
 
-Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback or use the Workflow Logs to return any debugging output. 
+Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback or use the [Workflow Logs](https://docs.pantheon.io/workflow-logs) to return any debugging output. 
 
 ### Example `pantheon.yml`
 
