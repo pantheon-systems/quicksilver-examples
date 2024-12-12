@@ -15,6 +15,7 @@ Hook into platform workflows and post notifications to Slack.
 1. Scroll up to **OAuth Tokens** and click the **Install to {your workspace}** button to install the app into your Slack instance.
 1. Authorize ("Allow") the app for your workspace.
 1. Copy the **Bot User OAuth Token** from the **OAuth Tokens** section. We will use [Pantheon Secrets](https://docs.pantheon.io/guides/secrets/overview) to store this token to a secret, bypassing the need for a local file with an API token stored in version control.
+1. Invite your app to a channel (e.g. `/invite @Deploybot` in the channel you want to post notifications to).
 1. You can customize any additional information about your bot, adding an avatar, etc. as you wish.
 
 At this point, you should be able to test the bot manually by sending a `curl` request to the Slack API:
