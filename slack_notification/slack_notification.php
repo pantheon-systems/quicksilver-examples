@@ -16,7 +16,7 @@ $slack_channel = '#firehose'; // The Slack channel to post to.
  * 
  * @return array
  */
-function _create_text_block( string $text = '', string $type = 'mrkdown', string $block_type = 'section' ) {
+function _create_text_block( string $text = '', string $type = 'mrkdwn', string $block_type = 'section' ) {
 	return [
 		'type' => $block_type,
 		'text' => [
