@@ -160,7 +160,6 @@ _post_to_slack($attachments);
  * Send a notification to Slack
  *
  * @param array $attachments The array of attachments to include in the Slack message.
- * @param string $slack_channel The channel to send the message to (defined at the top of the script).
  */
 function _post_to_slack($attachments) {
 	global $slack_channel;
