@@ -33,7 +33,7 @@ curl -X POST -H "Authorization: Bearer xoxb-YOUR-TOKEN" \
 
 1. Install the [Terminus Secrets Manager Plugin](https://docs.pantheon.io/guides/secrets#installation).
 1. Set the secret with the following command: `terminus secret:site:set <site> <secret-name> <oauth-token> --scope=web`
-  - Replace `<site>` with your site ID (e.g. `my-site`, not the UUID).
+  - Replace `<site>` with your site name (e.g. `my-site`).
   - Replace `<secret-name>` with the name of your secret that you will use in the code. In the example script, this is set to `slack_deploybot_token`.
   - Replace `<oauth-token>` with the Bot User OAuth Token copied from the above steps.
 1. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control.
