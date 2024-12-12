@@ -143,15 +143,16 @@ _post_to_slack($attachments);
  * Send a notification to Slack
  *
  * @param array $attachments The array of attachments to include in the Slack message.
+ * @param string $slack_channel The channel to send the message to (defined at the top of the script).
  */
-function _post_to_slack($attachments) {
+function _post_to_slack($attachments, $slack_channel) {
     // Uncomment the following line to debug the attachments array.
     // echo "Attachments - Raw:\n"; print_r( $attachments ); echo "\n";
 
     $slack_token = pantheon_get_secret('slack_deploybot_token'); // Set the token name to match the secret you added to Pantheon.
 
     $post = [
-        'channel' => '#firehose', // The Slack channel to post to.
+        'channel' => $slack_channel,
         'attachments' => $attachments,
     ];
 
