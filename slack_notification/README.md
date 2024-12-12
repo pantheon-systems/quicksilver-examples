@@ -40,7 +40,7 @@ curl -X POST -H "Authorization: Bearer xoxb-YOUR-TOKEN" \
 1. Update the script to set the `$slack_channel` (on line 8) to whatever channel you wish to push notifications to.
 1. Update the secret name in the `pantheon_get_secret` function call on line 151 (if you are using a secret that is not named `slack_deploybot_token`).
 1. Make any other customizations of the script as you see fit.
-1. Add Quicksilver operations to your `pantheon.yml`
+1. Add Quicksilver operations to your `pantheon.yml` (see the [example](#example-pantheonyml) below).
 1. Test a deployment and see the notification in the Slack channel associated with the webhook.
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback or use the [Workflow Logs](https://docs.pantheon.io/workflow-logs) to return any debugging output. 
