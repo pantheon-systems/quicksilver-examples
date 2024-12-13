@@ -1,183 +1,291 @@
 <?php
+/**
+ * Quicksilver Script: Slack Notification
+ * Description: Send a notification to a Slack channel when code is deployed to Pantheon.
+ */
 
-// Important constants :)
-$pantheon_yellow = '#EFD01B';
+/**
+ * Configuration options.
+ * 
+ * Make changes here to customize the behavior of your notification.
+ * 
+ * $slack_channel   The Slack channel to post to.
+ * $type            Determines the Slack API to use for the message. Expects 'attachments' or 'blocks'. Blocks is more modern (our attachment has blocks embedded in it), but Attachments allows the distinct sidebar color (below).
+ * $secret_key      The key for the Pantheon Secret containing the bot token.
+ * $pantheon_yellow A color for the sidebar that appears to the left of the Slack message (if 'attachments' is the type used).
+ */
+$slack_channel = '#firehose';
+$type = 'attachments';
+$secret_key = 'slack_deploybot_token';
+$pantheon_yellow = '#FFDC28';
 
-// Default values for parameters - this will assume the channel you define the webhook for.
-// The full Slack Message API allows you to specify other channels and enhance the messagge further
-// if you like: https://api.slack.com/docs/messages/builder
-$defaults = array(
-  'slack_username' => 'Pantheon-Quicksilver',
-  'always_show_text' => false,
-);
-
-// Load our hidden credentials.
-// See the README.md for instructions on storing secrets.
-$secrets = _get_secrets(array('slack_url'), $defaults);
-
-// Build an array of fields to be rendered with Slack Attachments as a table
-// attachment-style formatting:
-// https://api.slack.com/docs/attachments
-$fields = array(
-  array(
-    'title' => 'Site',
-    'value' => $_ENV['PANTHEON_SITE_NAME'],
-    'short' => 'true'
-  ),
-  array( // Render Environment name with link to site, <http://{ENV}-{SITENAME}.pantheon.io|{ENV}>
-    'title' => 'Environment',
-    'value' => '<http://' . $_ENV['PANTHEON_ENVIRONMENT'] . '-' . $_ENV['PANTHEON_SITE_NAME'] . '.pantheonsite.io|' . $_ENV['PANTHEON_ENVIRONMENT'] . '>',
-    'short' => 'true'
-  ),
-  array( // Render Name with link to Email from Commit message
-    'title' => 'By',
-    'value' => $_POST['user_email'],
-    'short' => 'true'
-  ),
-  array( // Render workflow phase that the message was sent
-    'title' => 'Workflow',
-    'value' => ucfirst($_POST['stage']) . ' ' . str_replace('_', ' ',  $_POST['wf_type']),
-    'short' => 'true'
-  ),
-  array(
-    'title' => 'View Dashboard',
-    'value' => '<https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>',
-    'short' => 'true'
-  ),
-);
-
-// Customize the message based on the workflow type.  Note that slack_notification.php
-// must appear in your pantheon.yml for each workflow type you wish to send notifications on.
-switch($_POST['wf_type']) {
-  case 'deploy':
-    // Find out what tag we are on and get the annotation.
-    $deploy_tag = `git describe --tags`;
-    $deploy_message = $_POST['deploy_message'];
-
-    // Prepare the slack payload as per:
-    // https://api.slack.com/incoming-webhooks
-    $text = 'Deploy to the '. $_ENV['PANTHEON_ENVIRONMENT'];
-    $text .= ' environment of '. $_ENV['PANTHEON_SITE_NAME'] .' by '. $_POST['user_email'] .' complete!';
-    $text .= ' <https://dashboard.pantheon.io/sites/'. PANTHEON_SITE .'#'. PANTHEON_ENVIRONMENT .'/deploys|View Dashboard>';
-    // Build an array of fields to be rendered with Slack Attachments as a table
-    // attachment-style formatting:
-    // https://api.slack.com/docs/attachments
-    $fields[] = array(
-      'title' => 'Details',
-      'value' => $text,
-      'short' => 'false'
-    );
-    $fields[] = array(
-      'title' => 'Deploy Note',
-      'value' => $deploy_message,
-      'short' => 'false'
-    );  
-    break;
-
-  case 'sync_code':
-    // Get the committer, hash, and message for the most recent commit.
-    $committer = `git log -1 --pretty=%cn`;
-    $email = `git log -1 --pretty=%ce`;
-    $message = `git log -1 --pretty=%B`;
-    $hash = `git log -1 --pretty=%h`;
-
-    // Prepare the slack payload as per:
-    // https://api.slack.com/incoming-webhooks
-    $text = 'Code sync to the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . ' by ' . $_POST['user_email'] . "!\n";
-    $text .= 'Most recent commit: ' . rtrim($hash) . ' by ' . rtrim($committer) . ': ' . $message;
-    // Build an array of fields to be rendered with Slack Attachments as a table
-    // attachment-style formatting:
-    // https://api.slack.com/docs/attachments
-    $fields = array_merge($fields, array(
-      array(
-        'title' => 'Commit',
-        'value' => rtrim($hash),
-        'short' => 'true'
-      ),
-      array(
-        'title' => 'Commit Message',
-        'value' => rtrim($message),
-        'short' => 'false'
-      )
-    ));
-    break;
-
-  case 'clear_cache':
-    $fields[] = array(
-      'title' => 'Cleared caches',
-      'value' => 'Cleared caches on the ' . $_ENV['PANTHEON_ENVIRONMENT'] . ' environment of ' . $_ENV['PANTHEON_SITE_NAME'] . "!\n",
-      'short' => 'false'
-    );
-    break;
-
-  default:
-    $text = $_POST['qs_description'];
-    break;
+/**
+ * A basic { type, text } object to embed in a block
+ * 
+ * @param string $text The text message to be sent to Slack.
+ * @param string $type The type of notification to send.
+ * @param string $block_type The type of block to be sent in the Slack message.
+ * 
+ * @return array
+ */
+function _create_text_block( string $text = '', string $type = 'mrkdwn', string $block_type = 'section' ) {
+	return [
+		'type' => $block_type,
+		'text' => [
+			'type' => $type,
+			'text' => $text,
+		],
+	];
 }
 
-$attachment = array(
-  'fallback' => $text,
-  'pretext' => ($_POST['wf_type'] == 'clear_cache') ? 'Caches cleared :construction:' : 'Deploying :rocket:',
-  'color' => $pantheon_yellow, // Can either be one of 'good', 'warning', 'danger', or any hex color code
-  'fields' => $fields
-);
-
-_slack_notification($secrets['slack_url'], $secrets['slack_channel'], $secrets['slack_username'], $text, $attachment, $secrets['always_show_text']);
+/**
+ * A multi-column block of content (very likely 2 cols)
+ * 
+ * @param array $fields The fields to send to the multi-column block.
+ * @return array 
+ */
+function _create_multi_block( array $fields ) {
+	return [
+		'type' => 'section',
+		'fields' => array_map( function( $field ) {
+			return [
+				'type' => 'mrkdwn',
+				'text' => $field,
+			];
+		}, $fields )
+	];
+}
 
 
 /**
- * Get secrets from secrets file.
+ * Creates a context block for a Slack message.
  *
- * @param array $requiredKeys  List of keys in secrets file that must exist.
+ * @param array $elements An array of text elements to be included in the context block.
+ * @return array The context block formatted for a Slack message.
  */
-function _get_secrets($requiredKeys, $defaults)
-{
-  $secretsFile = $_SERVER['HOME'] . '/files/private/secrets.json';
-  if (!file_exists($secretsFile)) {
-    die('No secrets file found. Aborting!');
-  }
-  $secretsContents = file_get_contents($secretsFile);
-  $secrets = json_decode($secretsContents, 1);
-  if ($secrets == false) {
-    die('Could not parse json in secrets file. Aborting!');
-  }
-  $secrets += $defaults;
-  $missing = array_diff($requiredKeys, array_keys($secrets));
-  if (!empty($missing)) {
-    die('Missing required keys in json secrets file: ' . implode(',', $missing) . '. Aborting!');
-  }
-  return $secrets;
+function _create_context_block( array $elements ) {
+	return [
+		'type' => 'context',
+		'elements' => array_map( function( $element ) {
+			return [
+				'type' => 'mrkdwn',
+				'text' => $element,
+			];
+		}, $elements ),
+	];
 }
 
 /**
- * Send a notification to slack
+ * A divider block
+ * 
+ * @return array 
  */
-function _slack_notification($slack_url, $channel, $username, $text, $attachment, $alwaysShowText = false)
-{
-  $attachment['fallback'] = $text;
-  $post = array(
-    'username' => $username,
-    'channel' => $channel,
-    'icon_emoji' => ':lightning_cloud:',
-    'attachments' => array($attachment)
-  );
-  if ($alwaysShowText) {
-    $post['text'] = $text;
-  }
-  $payload = json_encode($post);
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $slack_url);
-  curl_setopt($ch, CURLOPT_POST, 1);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-  curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-  // Watch for messages with `terminus workflows watch --site=SITENAME`
-  print("\n==== Posting to Slack ====\n");
-  $result = curl_exec($ch);
-  print("RESULT: $result");
-  // $payload_pretty = json_encode($post,JSON_PRETTY_PRINT); // Uncomment to debug JSON
-  // print("JSON: $payload_pretty"); // Uncomment to Debug JSON
-  print("\n===== Post Complete! =====\n");
-  curl_close($ch);
+function _create_divider_block() {
+  return ['type' => 'divider'];
 }
+
+/**
+ * Some festive emoji for the Slack message based on the workflow we're running.
+ * 
+ * @return array
+ */
+function _get_emoji() {
+	// Edit these if you want to change or add to the emoji used in Slack messages.
+	return [
+		'deploy' => ':rocket:',
+		'sync_code' => ':computer:',
+		'sync_code_external_vcs' => ':computer:',
+		'clear_cache' => ':broom:',
+		'clone_database' => ':man-with-bunny-ears-partying:',
+		'deploy_product' => ':magic_wand:',
+		'create_cloud_development_environment' => ':lightning_cloud:',
+	];
+}
+
+/**
+ * Get the type of the current workflow from the $_POST superglobal.
+ * 
+ * @return string
+ */
+function _get_workflow_type() {
+	return $_POST['wf_type'];
+}
+
+/**
+ * Extract a human-readable workflow name from the workflow type.
+ * 
+ * @return string
+ */
+function _get_workflow_name() {
+	return ucfirst(str_replace('_', ' ', _get_workflow_type()));
+}
+
+// Uncomment the following line to see the workflow type.
+// printf("Workflow type: %s\n", _get_workflow_type());
+
+/**
+ * Get Pantheon environment variables from the $_ENV superglobal.
+ * 
+ * @return object
+ */
+function _get_pantheon_environment() {
+	$pantheon_env = new stdClass;
+	$pantheon_env->site_name = $_ENV['PANTHEON_SITE_NAME'];
+	$pantheon_env->environment = $_ENV['PANTHEON_ENVIRONMENT'];
+
+	return $pantheon_env;
+}
+
+/**
+ * Create base blocks for all workflows.
+ * 
+ * @return array
+ */
+function _create_base_blocks() {
+	$icons = _get_emoji();
+	$workflow_type = _get_workflow_type();
+	$workflow_name = _get_workflow_name();
+	$environment = _get_pantheon_environment()->environment;
+	$site_name = _get_pantheon_environment()->site_name;
+
+	$blocks = [
+		_create_text_block( "{$icons[$workflow_type]} {$workflow_name}", 'plain_text', 'header' ),
+		_create_multi_block([
+			"*Site:* <https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#{$environment}/code|{$site_name}>",
+			"*Environment:* <http://{$environment}-{$site_name}.pantheonsite.io|{$environment}>",
+			"*Initiated by:* {$_POST['user_email']}",
+		]),
+	];
+
+	return $blocks;
+}
+
+/**
+ * Add custom blocks based on the workflow type. 
+ * 
+ * Note that slack_notification.php must appear in your pantheon.yml for each workflow type you wish to send notifications on.
+ *
+ * @return array
+ */
+function _get_blocks_for_workflow() {
+	$workflow_type = _get_workflow_type();
+	$blocks = _create_base_blocks();
+	$environment = _get_pantheon_environment()->environment;
+	$site_name = _get_pantheon_environment()->site_name;
+
+	switch ($workflow_type) {
+		case 'deploy':
+			$deploy_message = $_POST['deploy_message'];
+			$blocks[] = _create_text_block("*Deploy Note:*\n{$deploy_message}");
+			break;
+	
+		case 'sync_code':
+		case 'sync_code_external_vcs':
+			// Get the time, committer, and message for the most recent commit
+			$committer = trim(`git log -1 --pretty=%cn`);
+			$hash = trim(`git log -1 --pretty=%h`);
+			$message = trim(`git log -1 --pretty=%B`);
+			$blocks[] = _create_multi_block([
+				"*Commit:* {$hash}",
+				"*Committed by:* {$committer}",
+			]);
+			$blocks[] = _create_text_block("*Commit Message:*\n{$message}");
+			break;
+	
+		case 'clear_cache':
+			$blocks[] = _create_text_block("*Action:*\nCaches cleared on <http://{$environment}-{$site_name}.pantheonsite.io|{$environment}>.");
+			break;
+	
+		case 'clone_database':
+			$blocks[] = _create_multi_block([
+				"*Cloned from:* {$_POST['from_environment']}",
+				"*Cloned to:* {$environment}",
+			]);
+			break;
+	
+		default:
+			$description = $_POST['qs_description'] ?? 'No additional details provided.';
+			$blocks[] = _create_text_block("*Description:*\n{$description}");
+			break;
+	}
+	
+	// Add a divider block at the end of the message
+	$blocks[] = _create_divider_block();
+
+	return $blocks;
+}
+
+// Uncomment to debug the blocks.
+// echo "Blocks:\n";
+// print_r( _get_blocks_for_workflow() );
+
+/**
+ * Prepare Slack POST content as an attachment with yellow sidebar.
+ *
+ * @return array
+ */
+function _get_attachments() {
+	global $pantheon_yellow;
+	return [
+		[
+			'color' => $pantheon_yellow,
+			'blocks' => _get_blocks_for_workflow(),
+		]
+	];
+}
+
+// Uncomment the following line to debug the attachments array.
+// echo "Attachments:\n"; print_r( $attachments ); echo "\n";
+
+/**
+ * Send a notification to Slack
+ */
+function _post_to_slack() {
+	global $slack_channel, $type, $secret_key;
+
+	$attachments = _get_attachments();
+	$blocks = _get_blocks_for_workflow();
+	$slack_token = pantheon_get_secret($secret_key); 
+
+	$post['channel'] = $slack_channel;
+
+	// Check the type and adjust the payload accordingly.
+	if ( $type === 'attachments' ) {
+		$post['attachments'] = $attachments;
+	} elseif ( $type === 'blocks' ) {
+		$post['blocks'] = $blocks;
+	} else {
+		throw new InvalidArgumentException("Unsupported type: $type");
+	}
+
+	// Uncomment to debug the payload.
+	// echo "Payload: " . json_encode($post, JSON_PRETTY_PRINT) . "\n";
+	$payload = json_encode($post);
+
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, 'https://slack.com/api/chat.postMessage');
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [
+		'Authorization: Bearer ' . $slack_token,
+		'Content-Type: application/json; charset=utf-8',
+	]);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+
+	print("\n==== Posting to Slack ====\n");
+	$result = curl_exec($ch);
+	$response = json_decode($result, true);
+
+	if (!$response['ok']) {
+		print("Error: " . $response['error'] . "\n");
+		error_log("Slack API error: " . $response['error']);
+	} else {
+		print("Message sent successfully!\n");
+	}
+
+	curl_close($ch);
+}
+
+// Send the Slack notification
+_post_to_slack();
