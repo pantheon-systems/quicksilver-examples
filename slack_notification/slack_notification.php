@@ -4,9 +4,20 @@
  * Description: Send a notification to a Slack channel when code is deployed to Pantheon.
  */
 
+/**
+ * Configuration options.
+ * 
+ * Make changes here to customize the behavior of your notification.
+ * 
+ * $slack_channel   The Slack channel to post to.
+ * $type            Determines the Slack API to use for the message. Expects 'attachments' or 'blocks'. Blocks is more modern (our attachment has blocks embedded in it), but Attachments allows the distinct sidebar color (below).
+ * $secret_key      The key for the Pantheon Secret containing the bot token.
+ * $pantheon_yellow A color for the sidebar that appears to the left of the Slack message (if 'attachments' is the type used).
+ */
+$slack_channel = '#firehose';
+$type = 'attachments';
+$secret_key = 'slack_deploybot_token';
 $pantheon_yellow = '#FFDC28';
-$slack_channel = '#firehose'; // The Slack channel to post to.
-$type = 'attachments'; // 'attachments' or 'blocks'. Determines the Slack API to use. Blocks is more modern (our attachment has blocks embedded in it), but Attachments allows the distinct sidebar color.
 
 /**
  * A basic { type, text } object to embed in a block
@@ -73,99 +84,168 @@ function _create_divider_block() {
   return ['type' => 'divider'];
 }
 
-// some festive icons for the header based on the workflow we're running
-$icons = [
-	'deploy' => ':rocket:',
-	'sync_code' => ':computer:',
-	'sync_code_external_vcs' => ':computer:',
-	'clear_cache' => ':broom:',
-	'clone_database' => ':man-with-bunny-ears-partying:',
-	'deploy_product' => ':magic_wand:',
-	'create_cloud_development_environment' => ':lightning_cloud:',
-];
-
-// Extract workflow information
-$workflow_type = $_POST['wf_type'];
-$workflow_name = ucfirst(str_replace('_', ' ', $workflow_type));
-// Uncomment the following line to see the workflow type.
-// printf("Workflow type: %s\n", $workflow_type);
-$site_name = $_ENV['PANTHEON_SITE_NAME'];
-$environment = $_ENV['PANTHEON_ENVIRONMENT'];
-
-// Create base blocks for all workflows
-$blocks = [
-	_create_text_block( "{$icons[$workflow_type]} {$workflow_name}", 'plain_text', 'header' ),
-	_create_multi_block([
-		"*Site:* <https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#{$environment}/code|{$site_name}>",
-		"*Environment:* <http://{$environment}-{$site_name}.pantheonsite.io|{$environment}>",
-		"*Initiated by:* {$_POST['user_email']}",
-	]),
-];
-
-// Add custom blocks based on the workflow type. Note that slack_notification.php must appear in your pantheon.yml for each workflow type you wish to send notifications on.
-switch ($workflow_type) {
-	case 'deploy':
-		$deploy_message = $_POST['deploy_message'];
-		$blocks[] = _create_text_block("*Deploy Note:*\n{$deploy_message}");
-		break;
-
-	case 'sync_code':
-	case 'sync_code_external_vcs':
-		// Get the time, committer, and message for the most recent commit
-		$committer = trim(`git log -1 --pretty=%cn`);
-		$hash = trim(`git log -1 --pretty=%h`);
-		$message = trim(`git log -1 --pretty=%B`);
-		$blocks[] = _create_multi_block([
-			"*Commit:* {$hash}",
-			"*Committed by:* {$committer}",
-		]);
-		$blocks[] = _create_text_block("*Commit Message:*\n{$message}");
-		break;
-
-	case 'clear_cache':
-		$blocks[] = _create_text_block("*Action:*\nCaches cleared on <http://{$environment}-{$site_name}.pantheonsite.io|{$environment}>.");
-		break;
-
-	case 'clone_database':
-		$blocks[] = _create_multi_block([
-			"*Cloned from:* {$_POST['from_environment']}",
-			"*Cloned to:* {$environment}",
-		]);
-		break;
-
-	default:
-		$description = $_POST['qs_description'] ?? 'No additional details provided.';
-		$blocks[] = _create_text_block("*Description:*\n{$description}");
-		break;
+/**
+ * Some festive emoji for the Slack message based on the workflow we're running.
+ * 
+ * @return array
+ */
+function _get_emoji() {
+	// Edit these if you want to change or add to the emoji used in Slack messages.
+	return [
+		'deploy' => ':rocket:',
+		'sync_code' => ':computer:',
+		'sync_code_external_vcs' => ':computer:',
+		'clear_cache' => ':broom:',
+		'clone_database' => ':man-with-bunny-ears-partying:',
+		'deploy_product' => ':magic_wand:',
+		'create_cloud_development_environment' => ':lightning_cloud:',
+	];
 }
 
-// Add a divider block at the end of the message
-$blocks[] = _create_divider_block();
+/**
+ * Get the type of the current workflow from the $_POST superglobal.
+ * 
+ * @return string
+ */
+function _get_workflow_type() {
+	return $_POST['wf_type'];
+}
 
-// Prepare Slack POST content as an attachment with yellow sidebar.
-$attachments = [
-	[
-		'color' => $pantheon_yellow,
-		'blocks' => $blocks,
-	],
-];
+/**
+ * Extract a human-readable workflow name from the workflow type.
+ * 
+ * @return string
+ */
+function _get_workflow_name() {
+	return ucfirst(str_replace('_', ' ', _get_workflow_type()));
+}
+
+// Uncomment the following line to see the workflow type.
+// printf("Workflow type: %s\n", _get_workflow_type());
+
+/**
+ * Get Pantheon environment variables from the $_ENV superglobal.
+ * 
+ * @return object
+ */
+function _get_pantheon_environment() {
+	$pantheon_env = new stdClass;
+	$pantheon_env->site_name = $_ENV['PANTHEON_SITE_NAME'];
+	$pantheon_env->environment = $_ENV['PANTHEON_ENVIRONMENT'];
+
+	return $pantheon_env;
+}
+
+/**
+ * Create base blocks for all workflows.
+ * 
+ * @return array
+ */
+function _create_base_blocks() {
+	$icons = _get_emoji();
+	$workflow_type = _get_workflow_type();
+	$workflow_name = _get_workflow_name();
+	$environment = _get_pantheon_environment()->environment;
+	$site_name = _get_pantheon_environment()->site_name;
+
+	$blocks = [
+		_create_text_block( "{$icons[$workflow_type]} {$workflow_name}", 'plain_text', 'header' ),
+		_create_multi_block([
+			"*Site:* <https://dashboard.pantheon.io/sites/" . PANTHEON_SITE . "#{$environment}/code|{$site_name}>",
+			"*Environment:* <http://{$environment}-{$site_name}.pantheonsite.io|{$environment}>",
+			"*Initiated by:* {$_POST['user_email']}",
+		]),
+	];
+
+	return $blocks;
+}
+
+/**
+ * Add custom blocks based on the workflow type. 
+ * 
+ * Note that slack_notification.php must appear in your pantheon.yml for each workflow type you wish to send notifications on.
+ *
+ * @return array
+ */
+function _get_blocks_for_workflow() {
+	$workflow_type = _get_workflow_type();
+	$blocks = _create_base_blocks();
+	$environment = _get_pantheon_environment()->environment;
+	$site_name = _get_pantheon_environment()->site_name;
+
+	switch ($workflow_type) {
+		case 'deploy':
+			$deploy_message = $_POST['deploy_message'];
+			$blocks[] = _create_text_block("*Deploy Note:*\n{$deploy_message}");
+			break;
+	
+		case 'sync_code':
+		case 'sync_code_external_vcs':
+			// Get the time, committer, and message for the most recent commit
+			$committer = trim(`git log -1 --pretty=%cn`);
+			$hash = trim(`git log -1 --pretty=%h`);
+			$message = trim(`git log -1 --pretty=%B`);
+			$blocks[] = _create_multi_block([
+				"*Commit:* {$hash}",
+				"*Committed by:* {$committer}",
+			]);
+			$blocks[] = _create_text_block("*Commit Message:*\n{$message}");
+			break;
+	
+		case 'clear_cache':
+			$blocks[] = _create_text_block("*Action:*\nCaches cleared on <http://{$environment}-{$site_name}.pantheonsite.io|{$environment}>.");
+			break;
+	
+		case 'clone_database':
+			$blocks[] = _create_multi_block([
+				"*Cloned from:* {$_POST['from_environment']}",
+				"*Cloned to:* {$environment}",
+			]);
+			break;
+	
+		default:
+			$description = $_POST['qs_description'] ?? 'No additional details provided.';
+			$blocks[] = _create_text_block("*Description:*\n{$description}");
+			break;
+	}
+	
+	// Add a divider block at the end of the message
+	$blocks[] = _create_divider_block();
+
+	return $blocks;
+}
 
 // Uncomment to debug the blocks.
 // echo "Blocks:\n";
-// print_r( $blocks );
+// print_r( _get_blocks_for_workflow() );
 
-// Send the Slack notification
-_post_to_slack();
+/**
+ * Prepare Slack POST content as an attachment with yellow sidebar.
+ *
+ * @return array
+ */
+function _get_attachments() {
+	global $pantheon_yellow;
+	return [
+		[
+			'color' => $pantheon_yellow,
+			'blocks' => _get_blocks_for_workflow(),
+		]
+	];
+}
+
+// Uncomment the following line to debug the attachments array.
+// echo "Attachments:\n"; print_r( $attachments ); echo "\n";
 
 /**
  * Send a notification to Slack
  */
 function _post_to_slack() {
-	global $slack_channel, $type, $attachments, $blocks;
-	// Uncomment the following line to debug the attachments array.
-	// echo "Attachments:\n"; print_r( $attachments ); echo "\n";
+	global $slack_channel, $type, $secret_key;
 
-	$slack_token = pantheon_get_secret('slack_deploybot_token'); // Set the token name to match the secret you added to Pantheon.
+	$attachments = _get_attachments();
+	$blocks = _get_blocks_for_workflow();
+	$slack_token = pantheon_get_secret($secret_key); 
 
 	$post['channel'] = $slack_channel;
 
@@ -206,3 +286,6 @@ function _post_to_slack() {
 
 	curl_close($ch);
 }
+
+// Send the Slack notification
+_post_to_slack();
