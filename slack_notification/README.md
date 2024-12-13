@@ -38,17 +38,17 @@ curl -X POST -H "Authorization: Bearer xoxb-YOUR-TOKEN" \
   - Replace `<secret-name>` with the name of your secret that you will use in the code. In the example script, this is set to `slack_deploybot_token`.
   - Replace `<oauth-token>` with the Bot User OAuth Token copied from the above steps.
 1. Add the example `slack_notification.php` script to the `private` directory in the root of your site's codebase, that is under version control.
-1. Update the script to set the `$slack_channel` (on line 8) to whatever channel you wish to push notifications to.
-1. Update the secret name in the `pantheon_get_secret` function call on line 151 (if you are using a secret that is not named `slack_deploybot_token`).
+1. Update the `slack_notification.php` script to change the global variables used to create the Slack message. All of the variables are at the top of the file:
+  - `$slack_channel` - Update this to change the channel that you wish to push notifications to. Defaults to `#firehose`.
+  - `$type` - Update this to change the type of Slack API to use. `attachments` is the default and includes a yellow sidebar. `blocks` uses more modern API but lacks the sidebar. See [Slack's caveats for using "attachments"](https://api.slack.com/reference/surfaces/formatting#when-to-use-attachments).
+  - `$secret_key` - The _key_ for the Pantheon Secret you created earlier. Defaults to `slack_deploybot_token`.
 1. Make any other customizations of the script as you see fit.
 1. Add Quicksilver operations to your `pantheon.yml` (see the [example](#example-pantheonyml) below).
 1. Test a deployment and see the notification in the Slack channel associated with the webhook.
 
 Optionally, you may want to use the `terminus workflows watch` command to get immediate debugging feedback or use the [Workflow Logs](https://docs.pantheon.io/workflow-logs) to return any debugging output. 
 
-**Note:** The example `slack_notification.php` script uses [message attachments](https://api.slack.com/reference/messaging/attachments) to keep the colored sidebar while using the updated API. This can be swapped out in favor of a [block-based](https://api.slack.com/reference/block-kit/blocks) approach entirely if that cosmetic detail is not important to you. To do this, simply remove the `$attachments` parameter in the `_send_to_slack`
-
-For an example of the script that doesn't use attachments at all, see [@JBCSU's PR](https://github.com/pantheon-systems/quicksilver-examples/pull/176/files).
+**Note:** The example `slack_notification.php` script defaults to [message attachments](https://api.slack.com/reference/messaging/attachments) to keep the colored sidebar while using the updated API. This can be swapped out in favor of a [block-based](https://api.slack.com/reference/block-kit/blocks) approach entirely if that cosmetic detail is not important to you. To do this, simply change the `$type` from `'attachments'` to `'blocks'`.
 
 ### Example `pantheon.yml`
 
