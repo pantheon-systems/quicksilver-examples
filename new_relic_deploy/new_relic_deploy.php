@@ -27,7 +27,13 @@ if (empty($app_guid)) {
 // have good deploy markers, we gather data differently depending
 // on the context.
 
-if (in_array($_POST['wf_type'], ['sync_code','sync_code_with_build'])) {
+// Default required variables
+$user = "bot@getpantheon.com";
+$description = 'Deploy to environment triggered via Pantheon';
+$revision = 'unknown';
+$changelog = 'Pantheon Automation';
+
+if (in_array($_POST['wf_type'], ['sync_code','sync_code_with_build','merge_cloud_development_environment_into_dev'])) {
   // commit 'subject'
   $description = trim(`git log --pretty=format:"%s" -1`);
   $revision = trim(`git log --pretty=format:"%h" -1`);
