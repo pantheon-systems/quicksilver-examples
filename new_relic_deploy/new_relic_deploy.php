@@ -57,6 +57,7 @@ elseif ($_POST['wf_type'] == 'deploy') {
 $revision = rtrim($revision, "\n");
 $changelog = rtrim($changelog, "\n");
 $changelog = str_replace('\'','',$changelog);
+$changelog = str_replace('"','',$changelog);
 
 $deployment_data = [
   "deployment" => [
