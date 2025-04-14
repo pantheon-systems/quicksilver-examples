@@ -4,9 +4,9 @@ This example demonstrates how to purge Cloudflare cache when your live environme
 
 ## Instructions ##
 
-- Copy `cloudflare_cache.json` to `files/private` of the *live* environment after updating it with your cloudflare info.
+- Copy `cloudflare_cache.json` to `files/private` of the `live` environment after updating it with your cloudflare info.
  - API key can be found in the `My Settings` page on the Cloudflare site.
- - I couldn't find zone id in the UI. I viewed page source on the overview page and found it printed in JavaScript.
+ - The ZONE ID can be found in your [selected domain's sidebar panel](https://developers.cloudflare.com/fundamentals/setup/find-account-and-zone-ids/)
 - Add the example `cloudflare_cache.php` script to the `private/scripts` directory of your code repository.
 - Add a Quicksilver operation to your `pantheon.yml` to fire the script after a deploy.
 - Deploy through to the live environment and clear the cache!

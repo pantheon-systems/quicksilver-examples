@@ -22,9 +22,7 @@ function purge_cache($config) {
   curl_setopt($ch, CURLOPT_URL, 'https://api.cloudflare.com/client/v4/zones/' . $config['zone_id'] . '/purge_cache');
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'X-Auth-Email: ' . $config['email'],
-    'X-Auth-Key: ' . $config['api_key'],
-    'Content-Type: application/json'
+    'Authorization: Bearer ' . $config['auth_token']
   ));
   curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
   print("\n==== Sending Request to Cloudflare ====\n");
